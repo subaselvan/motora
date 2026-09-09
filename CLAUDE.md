@@ -13,7 +13,7 @@ Multi-category vehicle rental platform (bikes, scooters, cars, EVs, trucks, JCBs
 - Language: TypeScript throughout
 - Database: PostgreSQL (Supabase or Neon) + Drizzle or Prisma
 - Auth: NextAuth.js — Google OAuth + Phone OTP
-- Payments: Razorpay (India-focused, UPI support)
+- Payments: Razorpay (India-focused, UPI support) — demo/test mode only, never live processing
 - Maps/location: Google Maps API or Mapbox
 - State: Zustand + React Query
 - Search: Algolia or Meilisearch (post-MVP; start with DB queries)
@@ -76,10 +76,10 @@ text-5xl  61px/64px  800 Space Grotesk  — display text
 
 ## Information architecture (locked sitemap)
 ```
-/ (homepage) — search-first hero, categories, how-it-works, trust bar, featured vehicles, host CTA
+/ (homepage) — search-first hero, categories, how-it-works, trust bar, featured vehicles, host CTA  [BUILT]
 /search — filters (brand/model/CC/category/price/location), results, map/list toggle
-/vehicle/:id — gallery, specs, pricing, owner info, availability calendar, reviews, GPS preview, Book Now
-/booking/:vehicleId — dates+delivery → KYC → payment → confirmation
+/vehicle/:id — gallery, specs, pricing, owner info, availability calendar, reviews, GPS preview, required license, Book Now
+/booking/:vehicleId — dates+delivery → license & KYC verification → mock payment → confirmation
 /dashboard (auth'd renter) — rentals, track, extend, points, fines, messages, profile
 /host — onboarding, vehicles, earnings, bookings, damage-reports, settings
 /host-landing — marketing page for owners
@@ -88,13 +88,23 @@ text-5xl  61px/64px  800 Space Grotesk  — display text
 Primary CTA is "Book Now" everywhere it's relevant. Full per-page CTA map and homepage section order are in the discovery report if needed.
 
 ## Critical structural decision — read before building booking/rental flows
-The rental flow MUST split into two tracks, not one:
-1. **Self-drive** (bikes/scooters/cars/EVs) — the KYC-gated, app-only flow as originally specced.
-2. **Operator-assisted** (JCB/tractors/trucks) — different booking UX (may need phone-first fallback), different insurance class, vehicle comes with an operator, not self-drive.
-Do not build a single unified booking flow assuming self-drive for all categories — this was a specification gap caught during discovery.
+All categories are self-drive, including heavy machinery. There is ONE booking flow, not two. Access is gated by license class + verification, not by providing an operator. A renter books a JCB the same way they book a bike; they must prove they hold the correct license/credentials to unlock it.
+- Every vehicle carries a `requiredLicense` field (e.g. two-wheeler, LMV, commercial/heavy-vehicle).
+- The booking flow's verification step checks the renter's license class against the vehicle's requirement.
+- Surface the license requirement clearly on the vehicle detail page, before the user starts booking.
+
+Superseded: an earlier discovery-phase decision called for a two-track split (self-drive for bikes/cars/EVs vs. operator-assisted for JCB/tractors/trucks). That is no longer the plan — do not build an operator-assisted track.
+
+## Project nature — read before proposing "production" work
+This is a portfolio/demo build, not a live transactional product. Every section should look and behave like a real, complete product, but nothing connects to live real-world systems:
+- Payment UI (card/debit/UPI) is built and functional-looking, but not wired to a real gateway. Any checkout must carry a visible "Demo — no real payment processed" banner and must never accept a real card number as if it were live. Use test/sandbox mode if a gateway is ever wired in.
+- Legal/compliance pages (terms, privacy) are placeholder pages, not real legal work.
+- Launch scope is all-India, not a phased single city — there is no real fleet or RTO constraint to respect in a demo. If the project later attracts investment, these become real work items. Until then, do not block progress on real-world compliance, licensing, or payment-processor onboarding.
 
 ## Sequencing decision
-Launch categories sequentially, not all at once: bikes/scooters + cars/EVs first (1-2 cities), prove out GPS tracking, points system, and trust mechanics, THEN layer in commercial/heavy-machinery vertical. Do not scaffold all 7 vehicle categories as equally-weighted from day one.
+Build breadth across the core renter journey first (home → search → vehicle → booking), rather than depth on any single vertical. All 7 categories appear in the UI from the start.
+
+Superseded: an earlier decision called for a phased category launch (bikes/cars/EVs first in 1-2 cities, heavy machinery later). That was premised on a real-world rollout; it does not apply to this demo build.
 
 ## Points/credit system (differentiator — keep it real, not decorative)
 Trust/reputation system: late returns, damage, poor communication reduce points; low points restrict access to high-CC/premium vehicles. Exact point values are still open (see Open Items) — build the mechanism generically (a scoring field + event log), don't hardcode point values that haven't been decided.
@@ -103,17 +113,18 @@ Trust/reputation system: late returns, damage, poor communication reduce points;
 - Exact pricing/deposit amounts per category
 - Late fee amount per 10-minute increment
 - Points system starting value, deduction amounts, restoration rate
-- Payment gateway final pick (Razorpay assumed, not confirmed)
 - Fleet vs. P2P vehicle mix ratio
-- Insurance provider/partnership
-- KYC verification flow: automated API vs manual review
+- KYC verification flow: automated API vs manual review (demo uses a mock verification step)
 - CMS choice for vehicle listings/content
-- Launch cities
 - Owner commission percentage
 - Support channels (chat/call/email/in-app)
 - Promo/referral system
+- Small-format logo seal (favicon/nav/app-icon, must read at 16px) — still unresolved
+
+## Queued work — comprehensive India vehicle dataset (deferred, not started)
+Build a comprehensive mock dataset of vehicles available in the Indian market, structured category → brand → model → CC/variant, covering bikes, scooters, cars, EVs, trucks, JCBs and tractors. This replaces the small placeholder array once built. Explicitly deferred until the core page builds are further along — do not start it unprompted.
 
 ## Competitive context (why some of the above decisions matter)
 - Zoomcar: India's largest P2P self-drive car marketplace, expanding into motorcycles/scooters as of mid-2026 — directly encroaching on MOTORA's multi-category territory. Uses AI model-selector + real-time GPS/tariff comparison.
 - Royal Brothers: RTO-licensed bike rental, 14 states/43 cities, OEM partnerships — their moat is city-by-city licensing built over a decade, not something replicated at launch.
-- Trringo (Mahindra): closest precedent for JCB/tractor rental — operator-assisted, phone-first booking for a rural, less app-native audience. Confirms the two-track flow decision above.
+- Trringo (Mahindra): closest precedent for JCB/tractor rental — operator-assisted, phone-first booking for a rural, less app-native audience. Confirms the single self-drive flow decision above (no operator-assisted track needed).
