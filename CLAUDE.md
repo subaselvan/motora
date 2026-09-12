@@ -83,7 +83,7 @@ text-5xl  61px/64px  800 Space Grotesk  — display text
 
 **Motion**: `cubic-bezier(.4,0,.2,1)`, 180ms (fast) / 240ms (base). Tokens `--ease-standard`, `--duration-fast`, `--duration-base`. `prefers-reduced-motion` is already handled globally in globals.css.
 
-**Elevation** (dark theme): shadow-1 through shadow-4, increasingly deep black shadows; shadow-glow uses lime at 15% opacity for accent/focus.
+**Elevation**: no soft shadows. Depth is ruled — 1px charcoal hairlines, grid cells, border-colour and translateY shifts on hover. Confirmed during the homepage finish review 2026-09-12, which found and removed the last soft-shadow usages; the `--shadow-1..4`/`--shadow-glow` tokens still declared in `globals.css` are legacy and unused — treat them as removable, not as guidance.
 
 **Grid**: 12-column, 24px gutter desktop / 16px mobile. Breakpoints sm 640 / md 768 / lg 1024 / xl 1280 / 2xl 1536.
 

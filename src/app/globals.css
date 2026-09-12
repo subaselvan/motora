@@ -55,12 +55,7 @@
   --duration-fast: 180ms;
   --duration-base: 240ms;
 
-  /* Elevation (dark theme) */
-  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-2: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-  --shadow-3: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
-  --shadow-4: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
-  --shadow-glow: 0 0 20px rgba(198, 255, 61, 0.15);
+  /* No soft-shadow tokens: depth is ruled, not lit. See CLAUDE.md Elevation. */
 }
 
 @theme inline {
@@ -104,12 +99,6 @@
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
   --radius-full: var(--radius-full);
-
-  --shadow-1: var(--shadow-1);
-  --shadow-2: var(--shadow-2);
-  --shadow-3: var(--shadow-3);
-  --shadow-4: var(--shadow-4);
-  --shadow-glow: var(--shadow-glow);
 }
 
 body {
