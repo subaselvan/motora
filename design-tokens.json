@@ -1,0 +1,33 @@
+{
+  "note": "Working defaults, not locked. Adjust freely in the actual codebase.",
+  "color": {
+    "obsidian": "#0B0B0D",
+    "obsidian2": "#141417",
+    "obsidian3": "#1D1D21",
+    "lime": "#C6FF3D",
+    "limeInk": "#0B0B0D",
+    "orange": "#FF7A1A",
+    "pearl": "#F4F1E8",
+    "charcoal1": "#2A2A2E",
+    "charcoal2": "#3C3C41",
+    "charcoal3": "#54545A",
+    "logoRed": "#C81E2E",
+    "logoYellow": "#F4B800"
+  },
+  "font": {
+    "heading": "Space Grotesk",
+    "body": "Inter"
+  },
+  "type": {
+    "display": 40,
+    "h1": 32,
+    "h2": 25,
+    "h3": 20,
+    "body": 16,
+    "small": 13
+  },
+  "spacing": [4, 8, 16, 24, 32, 48, 64],
+  "radius": { "sm": 6, "md": 10, "lg": 16 },
+  "motion": { "easing": "cubic-bezier(.4,0,.2,1)", "durationMs": [180, 240] },
+  "mode": "dark-only (unconfirmed for investor demo — see DESIGN_SYSTEM.md)"
+}

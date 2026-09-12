@@ -5,7 +5,14 @@ Multi-category vehicle rental platform (bikes, scooters, cars, EVs, trucks, JCBs
 ## Working protocol (read this first)
 - Step-by-step, confirm-before-major-move. Do not scaffold large chunks of the app unimplemented or make architectural decisions silently — check in before each major step (new major route group, new data model, new integration).
 - Do not generate prompts for external tools unless directly asked.
-- Model guidance if this repo is ever used with model selection: Sonnet-class models at medium effort for UI/code/copy; reserve high-effort/Opus-class reasoning for genuine architecture tradeoffs, not routine implementation.
+- Model guidance if this repo is ever used with model selection: Sonnet-class models at medium effort for UI/code/copy; reserve high-effort/Opus-class reasoning for genuine architecture tradeoffs, not routine implementation. For visual/design work specifically, Opus at *medium* effort — high effort tends to overcomplicate UI.
+- Before hand-writing something from scratch, check whether an available skill, MCP connector, or plugin fits the task (design/UI-generation skills, Figma connector, testing/deploy connectors). Say so if a missing one would have helped.
+
+## Reference docs (in repo root)
+- `RESEARCH_BRIEF.md` — distilled 10-platform competitive teardown. Read this for day-to-day building.
+- `DESIGN_SYSTEM.md` + `design-tokens.json` — colour/type/spacing/component direction. Direction, not mandate; `src/app/globals.css` is the source of truth for implemented tokens.
+- `BUILD_PROMPT.md` — original build kickoff brief.
+- Note: these describe themselves as direction rather than a locked spec. Where they conflict with this file, this file records the decision that was actually made and why.
 
 ## Tech stack (locked)
 - Framework: Next.js (App Router)
@@ -27,26 +34,35 @@ Multi-category vehicle rental platform (bikes, scooters, cars, EVs, trucks, JCBs
 - Current logo status: hero/detail illustration is finalized and good. Small-format seal (favicon/nav/app-icon, must read at 16px) is still unresolved — use a temporary simple placeholder (e.g. stylized "M") until replaced.
 - Brand voice: direct, mechanical, motion-oriented; trustworthy for safety; energetic for adventure/touring; professional for commercial rentals.
 
-## Design tokens (locked)
+## Design tokens
 
-**Colors**
+Source of truth is `src/app/globals.css`. `DESIGN_SYSTEM.md` + `design-tokens.json` (both in repo root) are the design-side direction; treat their exact numbers as sensible defaults, not mandates.
+
+**Colors** — lime carries the functional load (CTA/price/success/trust), orange is secondary (badges/urgency/outline CTAs).
 ```
---color-obsidian: #0A0A0F        /* primary background, nav, footer */
---color-obsidian-light: #14141B  /* card backgrounds, elevated surfaces */
---color-obsidian-lighter: #1E1E2A /* hover states, active nav */
---color-lime: #CCFF00            /* brand accents, highlights, badges */
---color-lime-dark: #B3E600
---color-orange: #FF6B00          /* primary buttons, links, focus rings */
---color-orange-hover: #E66000
---color-orange-active: #CC5500
---color-pearl: #F5F0E8           /* primary text on dark */
---color-pearl-dim: #C4BFB6
---color-pearl-muted: #8A8580
+--color-obsidian: #0B0B0D         /* primary background, nav, footer */
+--color-obsidian-light: #141417   /* card surfaces */
+--color-obsidian-lighter: #1D1D21 /* inputs, raised surfaces, hover */
+--color-lime: #C6FF3D             /* PRIMARY CTA, price, success, trust score */
+--color-lime-dark: #B2EE22        /* primary hover */
+--color-lime-active: #9FD916
+--color-lime-ink: #0B0B0D         /* text on lime fills */
+--color-orange: #FF7A1A           /* badges, urgency, secondary/outline CTA */
+--color-orange-hover: #E66A0D
+--color-orange-active: #CC5A06
+--color-pearl: #F4F1E8            /* primary text on dark */
+--color-pearl-dim: #B8B3A8        /* secondary text */
+--color-pearl-muted: #8A857C      /* tertiary text, placeholders */
+--color-charcoal-1: #2A2A2E       /* borders/dividers — not text */
+--color-charcoal-2: #3C3C41
+--color-charcoal-3: #54545A
 --color-success: #22C55E
 --color-warning: #F59E0B
 --color-error: #EF4444
 --color-info: #3B82F6
 ```
+
+**Mode**: dark-only. Confirmed 2026-09-12 — no light-mode toggle, do not build one.
 
 **Typography** — Headlines: Space Grotesk, system-ui, sans-serif. Body: Inter, system-ui, sans-serif.
 ```
@@ -63,23 +79,26 @@ text-5xl  61px/64px  800 Space Grotesk  — display text
 
 **Spacing** (8px base): space-1..10 = 4,8,12,16,24,32,48,64,96,128px
 
-**Radius**: sm 4px (buttons/inputs/badges) · md 8px (cards/modals) · lg 12px (feature cards/images) · xl 16px (hero containers) · full 9999px (pills/avatars)
+**Radius**: sm 6px (buttons/inputs/badges) · md 10px (cards) · lg 16px (modals/hero panels) · xl 20px (large hero containers) · full 9999px (pills/avatars)
+
+**Motion**: `cubic-bezier(.4,0,.2,1)`, 180ms (fast) / 240ms (base). Tokens `--ease-standard`, `--duration-fast`, `--duration-base`. `prefers-reduced-motion` is already handled globally in globals.css.
 
 **Elevation** (dark theme): shadow-1 through shadow-4, increasingly deep black shadows; shadow-glow uses lime at 15% opacity for accent/focus.
 
 **Grid**: 12-column, 24px gutter desktop / 16px mobile. Breakpoints sm 640 / md 768 / lg 1024 / xl 1280 / 2xl 1536.
 
-**Components** (from locked spec):
-- Buttons: primary = orange bg / obsidian text; secondary = transparent / orange text / orange border; ghost = transparent / pearl text; lime variant = lime bg / obsidian text. Sizes sm(32) md(40) lg(48) xl(56). Radius sm.
-- Inputs: default border obsidian-lighter; focus border orange + 2px orange focus ring, offset 2px; error border error-red.
-- Cards: surface bg, radius-md, 1px obsidian-lighter border, hover = translateY(-2px) + shadow-3.
+**Components**:
+- Buttons: primary = lime fill / obsidian text; secondary = transparent / orange text / orange border; ghost = transparent / pearl text. Sizes sm(32) md(40) lg(48) xl(56). Radius sm. There is no separate `lime` variant — primary *is* lime.
+- Inputs: obsidian-lighter fill, charcoal-2 border; focus = lime border + 2px lime ring, offset 2px; error border error-red.
+- Cards: surface bg, radius-md, 1px border (prefer 1px borders over soft shadows), hover = translateY(-2px) + shadow-3.
+- Focus rings are lime everywhere.
 
 ## Information architecture (locked sitemap)
 ```
 / (homepage) — search-first hero, categories, how-it-works, trust bar, featured vehicles, host CTA  [BUILT]
 /search — filters (brand/model/CC/category/price/location), results, map/list toggle
-/vehicle/:id — gallery, specs, pricing, owner info, availability calendar, reviews, GPS preview, required license, Book Now
-/booking/:vehicleId — dates+delivery → license & KYC verification → mock payment → confirmation
+/vehicle/:id — gallery, specs, pricing, owner info, availability calendar, reviews, GPS preview, required license, (Heavy & Farm) both self-drive and operator-included rates, Book Now
+/booking/:vehicleId — dates+delivery → (Heavy & Farm) self-drive vs operator-included mode select → license & KYC verification → photo check-in → itemised fees → mock payment → confirmation
 /dashboard (auth'd renter) — rentals, track, extend, points, fines, messages, profile
 /host — onboarding, vehicles, earnings, bookings, damage-reports, settings
 /host-landing — marketing page for owners
@@ -88,12 +107,21 @@ text-5xl  61px/64px  800 Space Grotesk  — display text
 Primary CTA is "Book Now" everywhere it's relevant. Full per-page CTA map and homepage section order are in the discovery report if needed.
 
 ## Critical structural decision — read before building booking/rental flows
-All categories are self-drive, including heavy machinery. There is ONE booking flow, not two. Access is gated by license class + verification, not by providing an operator. A renter books a JCB the same way they book a bike; they must prove they hold the correct license/credentials to unlock it.
-- Every vehicle carries a `requiredLicense` field (e.g. two-wheeler, LMV, commercial/heavy-vehicle).
-- The booking flow's verification step checks the renter's license class against the vehicle's requirement.
-- Surface the license requirement clearly on the vehicle detail page, before the user starts booking.
+**Confirmed 2026-09-12.** Two tracks share one account and one trust/points system:
 
-Superseded: an earlier discovery-phase decision called for a two-track split (self-drive for bikes/cars/EVs vs. operator-assisted for JCB/tractors/trucks). That is no longer the plan — do not build an operator-assisted track.
+1. **Ride & Drive** — bikes, scooters, cars, EVs. MOTORA presents as the licensed operator of record (Zoomcar/Revv pattern), not a pure P2P marketplace. Always self-drive.
+2. **Heavy & Farm** — trucks, JCBs/excavators, tractors. Supports **both** self-drive and operator-included, chosen by the renter as a **live toggle at booking time** (not a fixed per-listing property).
+
+Because it is a booking-time toggle, every Heavy & Farm listing needs both modes priced and available: a self-drive rate and an operator-included rate, plus separate availability. Surface both rates on the vehicle detail page before the user starts booking.
+
+License gating is tiered by category (Yulu pattern): none/low-speed EV → standard DL → commercial for heavy self-drive. Every vehicle carries a `requiredLicense` field; operator-included bookings bypass the renter's own license requirement since MOTORA supplies the operator.
+
+Supersedes the previous "one flow, all self-drive" entry (commit 1b5decf), which itself superseded the original two-track split. Net effect: the two-track model is back, with the operator decision moved to booking time.
+
+## Booking flow spine
+One-time tiered license/KYC approval, reused across all categories → (Heavy & Farm only) self-drive vs operator-included mode select → timestamped photo check-in/check-out feeding the trust score → all fees itemised upfront, no checkout surprises → guaranteed live-human escalation path during an active rental.
+
+Design against these cross-platform failure patterns (from `RESEARCH_BRIEF.md`): damage/deposit disputes (photo check-in is mandatory, never optional), chatbot-only support during active rentals, equipment failure billed to the renter (auto-waive fees tied to a flagged fault), vehicle substitution without consent, hidden fees revealed at checkout, and any automated fraud/damage decision becoming binding without a human-review gate.
 
 ## Project nature — read before proposing "production" work
 This is a portfolio/demo build, not a live transactional product. Every section should look and behave like a real, complete product, but nothing connects to live real-world systems:
@@ -104,7 +132,19 @@ This is a portfolio/demo build, not a live transactional product. Every section 
 ## Sequencing decision
 Build breadth across the core renter journey first (home → search → vehicle → booking), rather than depth on any single vertical. All 7 categories appear in the UI from the start.
 
+**Current build order (set 2026-09-12)**: homepage is being lifted to investor-demo standard *first*, before /search. This is an investor-facing demo and the landing page is what gets shown live, so it earns the extra pass. Then search → vehicle → booking.
+
 Superseded: an earlier decision called for a phased category launch (bikes/cars/EVs first in 1-2 cities, heavy machinery later). That was premised on a real-world rollout; it does not apply to this demo build.
+
+## Landing page bar (investor demo)
+The homepage must not read as a template. Explicitly ruled out: stock photography, and the default "gradient hero + three feature cards" layout. Wanted: high-quality 3D-style rendered hero visuals (fully interactive WebGL is not required — a small lightweight interactive accent is fine), with load performance treated as a hard requirement because the page is demoed live in front of investors.
+
+Dual card templates, per `DESIGN_SYSTEM.md`:
+| | Ride & Drive (bikes/cars/EVs) | Heavy & Farm (JCB/tractors/trucks) |
+|---|---|---|
+| Emphasis | Lifestyle visual, model name, rating | Capacity/reach/power specs first |
+| Price | ₹/day, prominent | ₹/day or ₹/month, secondary to specs |
+| Trust signal | Verified badge + trust score | Operator-included / self-drive tag + RTO status |
 
 ## Points/credit system (differentiator — keep it real, not decorative)
 Trust/reputation system: late returns, damage, poor communication reduce points; low points restrict access to high-CC/premium vehicles. Exact point values are still open (see Open Items) — build the mechanism generically (a scoring field + event log), don't hardcode point values that haven't been decided.
@@ -127,4 +167,4 @@ Build a comprehensive mock dataset of vehicles available in the Indian market, s
 ## Competitive context (why some of the above decisions matter)
 - Zoomcar: India's largest P2P self-drive car marketplace, expanding into motorcycles/scooters as of mid-2026 — directly encroaching on MOTORA's multi-category territory. Uses AI model-selector + real-time GPS/tariff comparison.
 - Royal Brothers: RTO-licensed bike rental, 14 states/43 cities, OEM partnerships — their moat is city-by-city licensing built over a decade, not something replicated at launch.
-- Trringo (Mahindra): closest precedent for JCB/tractor rental — operator-assisted, phone-first booking for a rural, less app-native audience. Confirms the single self-drive flow decision above (no operator-assisted track needed).
+- Trringo (Mahindra): closest precedent for JCB/tractor rental — operator-assisted, phone-first booking for a rural, less app-native audience. Basis for the operator-included mode in the Heavy & Farm track, and a reminder not to force app-only access on that audience.
