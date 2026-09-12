@@ -3,3 +3,8 @@ node_modules
 .env*.local
 *.log
 .DS_Store
+tsconfig.tsbuildinfo
+
+# Review captures are regenerated each pass; the surface briefs are durable.
+.impeccable/review/
+.playwright-mcp/

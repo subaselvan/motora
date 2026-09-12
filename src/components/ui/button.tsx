@@ -4,15 +4,14 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-sm)] font-body text-sm font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-sm)] font-body text-sm font-medium transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        primary: "bg-orange text-obsidian hover:bg-orange-hover active:bg-orange-active",
+        primary: "bg-lime text-lime-ink hover:bg-lime-dark active:bg-lime-active",
         secondary:
           "bg-transparent text-orange border border-orange hover:bg-orange/10",
         ghost: "bg-transparent text-pearl hover:bg-obsidian-lighter",
-        lime: "bg-lime text-obsidian hover:bg-lime-dark",
       },
       size: {
         sm: "h-8 px-3 text-xs",
