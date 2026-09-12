@@ -71,7 +71,10 @@ export const CATEGORIES: {
   licence: LicenceClass;
 }[] = [
   { id: "bikes", label: "Bikes", track: "ride-drive", licence: "two-wheeler" },
-  { id: "scooters", label: "Scooters", track: "ride-drive", licence: "none" },
+  // A geared or 100cc+ scooter needs a standard two-wheeler licence in India.
+  // "none" is reserved for low-speed EVs (under 25kph / 250W), which this
+  // demo fleet does not carry yet.
+  { id: "scooters", label: "Scooters", track: "ride-drive", licence: "two-wheeler" },
   { id: "cars", label: "Cars", track: "ride-drive", licence: "lmv" },
   { id: "evs", label: "EVs", track: "ride-drive", licence: "lmv" },
   { id: "trucks", label: "Trucks", track: "heavy-farm", licence: "commercial" },
@@ -125,7 +128,7 @@ export const VEHICLES: Vehicle[] = [
     model: "Activa 6G",
     category: "scooters",
     city: "Coimbatore",
-    requiredLicence: "none",
+    requiredLicence: "two-wheeler",
     perDay: 399,
     rating: 4.6,
     trips: 507,

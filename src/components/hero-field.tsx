@@ -38,9 +38,10 @@ void main() {
     float gz = abs(fract(z - travel) - 0.5);
     float grid = smoothstep(w, 0.0, gx) * 0.8 + smoothstep(w, 0.0, gz);
 
-    // Fade only at the very horizon, where rows compress past resolution,
-    // and at the extreme near edge. Everything between stays readable.
-    float depth = smoothstep(0.0, 0.045, d) * (1.0 - smoothstep(0.40, 0.58, d));
+    // Fade only where rows compress past resolution right at the horizon.
+    // The near field is left to survive to the canvas bottom — it's the
+    // CSS mask's job to fade the very bottom of the section, not the shader's.
+    float depth = smoothstep(0.0, 0.045, d);
 
     // Rows falling away toward the edges keeps the centre column legible.
     float vignette = 1.0 - smoothstep(0.25, 0.62, abs(uv.x - 0.5));

@@ -42,7 +42,11 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-[radial-gradient(80%_60%_at_50%_100%,rgba(198,255,61,0.05)_0%,transparent_70%)]"
       />
-      <HeroField className="pointer-events-none absolute inset-0 h-full w-full [mask-image:linear-gradient(to_bottom,transparent_0%,black_48%,black_100%)]" />
+      {/* Shader horizon sits at 42% from the top (uv.y=0.58 in bottom-up
+          fragcoord space). The mask's opaque stop must sit above that line,
+          not below it — put it below and you fade out exactly the densest,
+          most legible rows: the ones that actually sell recession. */}
+      <HeroField className="pointer-events-none absolute inset-0 h-full w-full [mask-image:linear-gradient(to_bottom,transparent_0%,black_36%,black_100%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4 pt-14 md:px-6 md:pt-20">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
