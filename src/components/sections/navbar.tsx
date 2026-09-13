@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,32 +11,6 @@ const primaryLinks = [
   { href: "/search?track=heavy-farm", label: "Heavy & Farm" },
   { href: "/host-landing", label: "Become a host" },
 ];
-
-/**
- * Deliberate seal, not a placeholder: the real badge (/public/logo.png) has
- * fine linework and a wordmark that dissolve below ~48px — confirmed by
- * rendering it at 16/32/64px on the site background. Decided 2026-09-13 to
- * keep this simplified mark for small slots (nav, favicon) and use the full
- * badge only where it can be large (footer). See DESIGN.md. Built from UI
- * tokens only, since logo red/yellow never enter the UI palette.
- */
-function MotoraSeal() {
-  return (
-    <span
-      aria-hidden="true"
-      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-sm)] border border-charcoal-2 bg-obsidian-lighter"
-    >
-      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-        <path
-          d="M2 12.5V3.5L8 9l6-5.5v9"
-          stroke="var(--color-lime)"
-          strokeWidth="2"
-          strokeLinecap="square"
-        />
-      </svg>
-    </span>
-  );
-}
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -48,7 +23,14 @@ export function Navbar() {
           className="flex items-center gap-2.5 rounded-[var(--radius-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian"
           aria-label="MOTORA home"
         >
-          <MotoraSeal />
+          <Image
+            src="/logo.png"
+            alt=""
+            width={32}
+            height={32}
+            className="h-8 w-8 shrink-0"
+            priority
+          />
           <span className="font-heading text-xl font-bold tracking-[0.02em] text-pearl">
             MOTORA
           </span>
