@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const footerLinks = {
@@ -24,7 +25,17 @@ export function Footer() {
   return (
     <footer className="mt-auto border-t border-charcoal-1">
       <div className="mx-auto max-w-7xl px-4 py-12 md:px-6">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
+        {/* Full illustrated badge — legible only at this size and up (see
+            DESIGN.md). The nav/favicon use a simplified seal instead. */}
+        <Image
+          src="/logo.png"
+          alt="MOTORA"
+          width={56}
+          height={56}
+          className="h-14 w-14"
+        />
+
+        <div className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-4">
           {Object.entries(footerLinks).map(([heading, links]) => (
             <div key={heading}>
               <h3 className="font-heading text-sm font-medium text-pearl">{heading}</h3>

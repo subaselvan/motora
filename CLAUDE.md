@@ -30,8 +30,8 @@ Multi-category vehicle rental platform (bikes, scooters, cars, EVs, trucks, JCBs
 
 ## Brand identity (locked)
 - Brand name: MOTORA
-- Logo: red/yellow/black circular go-kart badge — logo-only colors, RED (#DC2626) and YELLOW (#FACC15) must NEVER appear in UI tokens/components. Logo is a separate asset system from the UI palette.
-- Current logo status: hero/detail illustration is finalized and good. Small-format seal (favicon/nav/app-icon, must read at 16px) is still unresolved — use a temporary simple placeholder (e.g. stylized "M") until replaced.
+- Logo: red/yellow/black circular go-kart badge — logo-only colors, RED (#D8050A) and YELLOW (#FCCF00), sampled from the delivered asset — must NEVER appear in UI tokens/components. Logo is a separate asset system from the UI palette.
+- Current logo status: received 2026-09-13 as `C:\Users\subas\Desktop\go kart logo _ website.png`, matted to a transparent PNG at `public/logo.png` (1024px source, cropped to the circle). Tested at 16/32/64px on the site background: the badge and wordmark are illegible below ~48px. **Decision (2026-09-13): use the full badge only where it can render large (footer, ≥56px); keep the simplified geometric seal already built for the nav (32px) and favicon (16px) until a dedicated small-format seal is made.**
 - Brand voice: direct, mechanical, motion-oriented; trustworthy for safety; energetic for adventure/touring; professional for commercial rentals.
 
 ## Design tokens
@@ -159,7 +159,7 @@ Trust/reputation system: late returns, damage, poor communication reduce points;
 - Owner commission percentage
 - Support channels (chat/call/email/in-app)
 - Promo/referral system
-- Small-format logo seal (favicon/nav/app-icon, must read at 16px) — still unresolved
+- Small-format logo seal (favicon/nav/app-icon, must read at 16px) — the full badge doesn't work at this size (confirmed by testing); still need a dedicated simplified mark. The geometric placeholder stands in until then.
 
 ## Queued work — comprehensive India vehicle dataset (deferred, not started)
 Build a comprehensive mock dataset of vehicles available in the Indian market, structured category → brand → model → CC/variant, covering bikes, scooters, cars, EVs, trucks, JCBs and tractors. This replaces the small placeholder array once built. Explicitly deferred until the core page builds are further along — do not start it unprompted.

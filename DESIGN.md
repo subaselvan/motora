@@ -128,7 +128,7 @@ Two functional colours on a black ground, plus a warm off-white for text — not
 - **Charcoal 1/2/3** (`#2A2A2E` / `#3C3C41` / `#54545A`): borders and dividers only, never text — 1 is the resting border, 2 is hover, 3 is the strongest still-neutral border before a colour takes over.
 
 ### Named Rules
-**The Logo-Colour Firewall.** The go-kart badge's red (`#C81E2E`) and yellow (`#F4B800`) never appear in a UI token, a component, or an inline style. The badge is a separate asset system.
+**The Logo-Colour Firewall.** The go-kart badge's red (`#D8050A`) and yellow (`#FCCF00`, sampled from the delivered asset) never appear in a UI token, a component, or an inline style. The badge is a separate asset system. The badge itself (`public/logo.png`) is legible only at ~48px and above — it appears at full size in the footer, never in the nav or favicon, which use the simplified geometric seal instead.
 
 **The Small-Signal Rule.** Orange at a small size (a threshold number, a caption) ships bold or larger — never small and regular. This is the product's own legibility rule, confirmed during the homepage build, not a generic accessibility minimum.
 

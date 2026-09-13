@@ -12,10 +12,12 @@ const primaryLinks = [
 ];
 
 /**
- * Temporary seal. The real go-kart badge is a supplied asset — drop it at
- * /public/logo.svg and swap this element for an <Image>; the 32px box and
- * surrounding spacing are already sized for it. Logo red/yellow stay out of
- * the UI palette, so this stand-in is built from UI tokens only.
+ * Deliberate seal, not a placeholder: the real badge (/public/logo.png) has
+ * fine linework and a wordmark that dissolve below ~48px — confirmed by
+ * rendering it at 16/32/64px on the site background. Decided 2026-09-13 to
+ * keep this simplified mark for small slots (nav, favicon) and use the full
+ * badge only where it can be large (footer). See DESIGN.md. Built from UI
+ * tokens only, since logo red/yellow never enter the UI palette.
  */
 function MotoraSeal() {
   return (
