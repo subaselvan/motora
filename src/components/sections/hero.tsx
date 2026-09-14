@@ -3,20 +3,37 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MapPin, Search } from "lucide-react";
+import { Camera, Headset, MapPin, ReceiptText, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { HeroField } from "@/components/hero-field";
+import { HeroKart } from "@/components/hero-kart";
 import { TrustLedger } from "@/components/trust-ledger";
 import { CATEGORIES, type Category } from "@/lib/vehicles";
 
 /** Each line answers a documented industry complaint from RESEARCH_BRIEF.md —
- *  commitments against known failures, not feature boasts. */
-const COMMITMENTS: [string, string][] = [
-  ["Photo check-in", "Timestamped, both ends. Never optional."],
-  ["Every fee upfront", "Nothing new appears at checkout."],
-  ["A human, on call", "Reachable mid-rental, not a chatbot."],
-];
+ *  commitments against known failures, not feature boasts.
+ *
+ *  Deliberately NOT a three-up card row: that arrangement is ruled out by
+ *  CLAUDE.md, DESIGN.md and BUILD_PROMPT.md. These render as one continuous
+ *  hairline-divided strip with weighted emphasis, not three equal boxes. */
+const COMMITMENTS = [
+  {
+    icon: Camera,
+    term: "Photo check-in",
+    detail: "Timestamped at both ends. Never optional.",
+  },
+  {
+    icon: ReceiptText,
+    term: "Every fee upfront",
+    detail: "Nothing new appears at checkout.",
+  },
+  {
+    icon: Headset,
+    term: "A human, on call",
+    detail: "Reachable mid-rental, not a chatbot.",
+  },
+] as const;
 
 export function Hero() {
   const router = useRouter();
@@ -46,7 +63,10 @@ export function Hero() {
           fragcoord space). The mask's opaque stop must sit above that line,
           not below it — put it below and you fade out exactly the densest,
           most legible rows: the ones that actually sell recession. */}
-      <HeroField className="pointer-events-none absolute inset-0 h-full w-full [mask-image:linear-gradient(to_bottom,transparent_0%,black_36%,black_100%)]" />
+      {/* The kart is the hero's visual now, so the ground plane drops back to
+          being a floor. Masked to a band that closes above the guarantee
+          strip: at full height its horizon ran straight through that copy. */}
+      <HeroField className="pointer-events-none absolute inset-0 h-full w-full opacity-50 [mask-image:linear-gradient(to_bottom,transparent_0%,black_28%,black_44%,transparent_60%)]" />
 
       <div className="relative mx-auto max-w-7xl px-4 pt-14 md:px-6 md:pt-20">
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
@@ -61,14 +81,15 @@ export function Hero() {
             </h1>
 
             <p className="mt-5 max-w-[58ch] text-lg leading-relaxed text-pearl-dim">
-              Rent a scooter this morning and an excavator next season — same
-              account, same licence check, and the trust you already earned
-              carries across every one of them.
+              Rent a scooter today and an excavator next season. Same account,
+              same licence check, same trust you already earned.
             </p>
 
             <form
               onSubmit={handleSubmit}
-              className="mt-8 flex flex-col gap-2 rounded-[var(--radius-lg)] border border-charcoal-1 bg-obsidian-light/85 p-2 backdrop-blur-sm sm:flex-row"
+              /* Elevation 3 — the page's primary action, so it sits furthest
+                 forward of anything in the hero. */
+              className="mt-8 flex flex-col gap-2 rounded-[var(--radius-lg)] border border-charcoal-2 bg-obsidian-light p-2 shadow-[var(--elev-3)] sm:flex-row"
             >
               <div className="relative min-w-0 flex-1">
                 <label htmlFor={queryId} className="sr-only">
@@ -84,7 +105,7 @@ export function Hero() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Model or brand"
-                  className="h-12 border-transparent bg-transparent pl-9 text-base"
+                  className="h-12 pl-9 text-base"
                 />
               </div>
 
@@ -102,7 +123,7 @@ export function Hero() {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Location"
-                  className="h-12 border-transparent bg-transparent pl-9 text-base"
+                  className="h-12 pl-9 text-base"
                 />
               </div>
 
@@ -116,21 +137,57 @@ export function Hero() {
               </Button>
             </form>
 
-            <dl className="mt-8 grid gap-px overflow-hidden rounded-[var(--radius-md)] border border-charcoal-1 bg-charcoal-1 sm:grid-cols-3">
-              {COMMITMENTS.map(([term, detail]) => (
-                <div key={term} className="bg-obsidian px-4 py-3.5">
-                  <dt className="font-heading text-sm font-medium text-lime">
-                    {term}
-                  </dt>
-                  <dd className="mt-1 text-xs leading-relaxed text-pearl-muted">
-                    {detail}
-                  </dd>
-                </div>
-              ))}
-            </dl>
+            {/* Elevation 0 — deliberately the flattest thing in the hero.
+                One continuous strip on the page plane, hairline-divided,
+                so it supports the search bar instead of competing with it. */}
+            <div className="mt-7 border-t border-charcoal-1 pt-5">
+              <p className="font-body text-xs uppercase tracking-[0.16em] text-pearl-muted">
+                Every rental, guaranteed
+              </p>
+              <dl className="mt-4 flex flex-col divide-y divide-charcoal-1 sm:flex-row sm:divide-x sm:divide-y-0">
+                {COMMITMENTS.map(({ icon: Icon, term, detail }, i) => (
+                  <div
+                    key={term}
+                    className={[
+                      "flex items-start gap-2.5 py-3 sm:py-0",
+                      i === 0 ? "sm:pr-5" : "sm:px-5",
+                      i === COMMITMENTS.length - 1 ? "sm:pr-0" : "",
+                    ].join(" ")}
+                  >
+                    <Icon
+                      size={15}
+                      aria-hidden="true"
+                      className={
+                        i === 0
+                          ? "mt-0.5 shrink-0 text-lime"
+                          : "mt-0.5 shrink-0 text-pearl-muted"
+                      }
+                    />
+                    <div className="min-w-0">
+                      <dt
+                        className={
+                          i === 0
+                            ? "font-heading text-sm font-medium text-pearl"
+                            : "font-heading text-sm font-medium text-pearl-dim"
+                        }
+                      >
+                        {term}
+                      </dt>
+                      <dd className="mt-0.5 text-xs leading-relaxed text-pearl-muted">
+                        {detail}
+                      </dd>
+                    </div>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
 
           <div className="lg:col-span-5">
+            {/* The dimensional object gets its own space above the ledger
+                rather than sitting behind it — a 3D object hidden behind an
+                opaque panel is not a 3D object. */}
+            <HeroKart className="pointer-events-none mb-5 hidden h-[300px] w-full lg:block" />
             <TrustLedger activeCategory={activeCategory} />
           </div>
         </div>

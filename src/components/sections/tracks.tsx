@@ -8,14 +8,14 @@ const TRACKS = [
     id: "ride-drive" as const,
     name: "Ride & Drive",
     blurb:
-      "Bikes, scooters, cars and EVs. MOTORA is the operator of record, so the vehicle is ours to answer for — always self-drive, licence-gated by class.",
+      "Bikes, scooters, cars and EVs. MOTORA is the operator of record, so the vehicle is ours to answer for. Always self-drive, licence-gated by class.",
     href: "/search?track=ride-drive",
   },
   {
     id: "heavy-farm" as const,
     name: "Heavy & Farm",
     blurb:
-      "Trucks, backhoes and tractors. Drive it yourself with a commercial licence, or book it with an operator — you choose at checkout, and both rates are priced upfront.",
+      "Trucks, backhoes and tractors. Drive it yourself with a commercial licence, or book it with an operator. You choose at checkout, and both rates are priced upfront.",
     href: "/search?track=heavy-farm",
   },
 ];

@@ -5,7 +5,7 @@ const STEPS = [
   {
     title: "Verify once",
     detail:
-      "Licence and KYC approved a single time, tiered by category — none for a scooter, commercial for a backhoe.",
+      "Licence and KYC approved a single time, tiered by category: none for a scooter, commercial for a backhoe.",
     prevents: "Re-uploading documents for every booking",
   },
   {
@@ -17,7 +17,7 @@ const STEPS = [
   {
     title: "See the whole price",
     detail:
-      "Every conditional fee — late return, delivery, fuel, deposit — is itemised on the booking summary.",
+      "Every conditional fee (late return, delivery, fuel, deposit) is itemised on the booking summary.",
     prevents: "Charges that only appear at checkout",
   },
   {

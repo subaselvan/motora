@@ -5,6 +5,8 @@
   --color-obsidian: #0B0B0D;
   --color-obsidian-light: #141417;
   --color-obsidian-lighter: #1D1D21;
+  /* Below the page plane — inputs and wells recede into this. */
+  --color-obsidian-sunken: #070709;
 
   /* Lime carries the functional load: primary CTA, price, success, trust score. */
   --color-lime: #C6FF3D;
@@ -55,13 +57,29 @@
   --duration-fast: 180ms;
   --duration-base: 240ms;
 
-  /* No soft-shadow tokens: depth is ruled, not lit. See CLAUDE.md Elevation. */
+  /* Elevation — five named levels (DESIGN_SYSTEM.md). A ladder, not a switch.
+     Levels 0-1 stay ruled: borders and surface tone do the work, per the
+     anti-slop rule. Levels 2-4 add real cast depth, reserved for surfaces
+     that must genuinely come forward. Every level pairs a shadow with a
+     surface tone and a border strength — using the shadow alone is what made
+     everything read flat and identical. */
+  --elev-0: none;                                    /* page plane */
+  --elev-1: none;                                    /* resting card: border only */
+  --elev-2: 0 1px 2px rgba(0, 0, 0, 0.55),
+            0 6px 16px -6px rgba(0, 0, 0, 0.55);     /* raised card, hover */
+  --elev-3: 0 2px 6px rgba(0, 0, 0, 0.6),
+            0 18px 36px -14px rgba(0, 0, 0, 0.72);   /* focal panel, dropdown */
+  --elev-4: 0 4px 12px rgba(0, 0, 0, 0.68),
+            0 32px 64px -18px rgba(0, 0, 0, 0.82);   /* modal, overlay */
+  /* Inset, for level -1 surfaces (inputs, wells). */
+  --elev-sunken: inset 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 @theme inline {
   --color-obsidian: var(--color-obsidian);
   --color-obsidian-light: var(--color-obsidian-light);
   --color-obsidian-lighter: var(--color-obsidian-lighter);
+  --color-obsidian-sunken: var(--color-obsidian-sunken);
 
   --color-lime: var(--color-lime);
   --color-lime-dark: var(--color-lime-dark);
@@ -99,6 +117,12 @@
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
   --radius-full: var(--radius-full);
+
+  --shadow-elev-1: var(--elev-1);
+  --shadow-elev-2: var(--elev-2);
+  --shadow-elev-3: var(--elev-3);
+  --shadow-elev-4: var(--elev-4);
+  --shadow-sunken: var(--elev-sunken);
 }
 
 body {

@@ -17,7 +17,7 @@ const inter = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "MOTORA — Rent Any Vehicle, Anywhere",
+  title: "MOTORA: Rent Any Vehicle, Anywhere",
   description:
     "Rent bikes, scooters, cars, EVs, trucks and heavy machinery by the hour or day. Real-time GPS tracking, verified owners, flexible delivery.",
 };

@@ -22,7 +22,7 @@ export function HostCta() {
             </h2>
             <p className="mt-4 max-w-[58ch] text-lg leading-relaxed text-pearl-dim">
               List it and it earns while you are not using it. You set the
-              price, the availability, and who gets approved — and every renter
+              price, the availability, and who gets approved. Every renter
               arrives with a trust record you can read before you accept.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">

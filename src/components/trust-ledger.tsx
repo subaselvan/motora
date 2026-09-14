@@ -52,7 +52,9 @@ export function TrustLedger({ activeCategory }: { activeCategory: Category | nul
   return (
     <div
       ref={ref}
-      className="overflow-hidden rounded-[var(--radius-md)] border border-charcoal-1 bg-obsidian-light/80 backdrop-blur-sm"
+      /* Elevation 3 — the hero's focal panel. It sits over the 3D object, so
+         it needs a near-opaque ground and real cast depth to stay legible. */
+      className="overflow-hidden rounded-[var(--radius-md)] border border-charcoal-2 bg-obsidian-light shadow-[var(--elev-3)]"
     >
       <div className="flex items-baseline justify-between gap-4 border-b border-charcoal-1 px-5 py-4">
         <div>

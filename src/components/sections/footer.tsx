@@ -60,7 +60,7 @@ export function Footer() {
             © {new Date().getFullYear()} MOTORA. All rights reserved.
           </p>
           <p className="text-xs text-pearl-muted">
-            Preview build — no real bookings or payments are processed.
+            Preview build. No real bookings or payments are processed.
           </p>
         </div>
       </div>

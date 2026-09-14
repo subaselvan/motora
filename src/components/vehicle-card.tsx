@@ -51,9 +51,11 @@ function CardShell({
         "group relative flex flex-col overflow-hidden rounded-[var(--radius-md)]",
         "border border-charcoal-1 bg-obsidian-light",
         "transition-[transform,border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-standard)]",
+        // Elevation 1 at rest, 2 on hover — cards lift off the page plane,
+        // but never as far forward as the hero's focal panels (elevation 3).
         locked
           ? "opacity-60"
-          : "hover:-translate-y-0.5 hover:border-charcoal-3",
+          : "hover:-translate-y-0.5 hover:border-charcoal-3 hover:shadow-[var(--elev-2)]",
       ].join(" ")}
     >
       {children}
