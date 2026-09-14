@@ -4,18 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   formatINR,
+  LICENCE_LABEL,
   type HeavyFarmVehicle,
-  type LicenceClass,
   type RideDriveVehicle,
   type Vehicle,
 } from "@/lib/vehicles";
 
-const LICENCE_LABEL: Record<LicenceClass, string> = {
-  none: "No licence",
-  "two-wheeler": "Two-wheeler",
-  lmv: "LMV",
-  commercial: "Commercial",
-};
+/** Turo pattern: show the multi-day total beside the daily rate so nobody
+ *  does arithmetic, and nothing new appears at checkout. */
+const QUOTE_DAYS = 3;
 
 /**
  * Two templates, not one with a flag: Ride & Drive sells the object,
@@ -51,11 +48,10 @@ function CardShell({
         "group relative flex flex-col overflow-hidden rounded-[var(--radius-md)]",
         "border border-charcoal-1 bg-obsidian-light",
         "transition-[transform,border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-standard)]",
-        // Elevation 1 at rest, 2 on hover — cards lift off the page plane,
-        // but never as far forward as the hero's focal panels (elevation 3).
+        // Flat at rest; on hover it takes the system's single shadow tier.
         locked
           ? "opacity-60"
-          : "hover:-translate-y-0.5 hover:border-charcoal-3 hover:shadow-[var(--elev-2)]",
+          : "hover:-translate-y-0.5 hover:border-charcoal-3 hover:shadow-[var(--elev)]",
       ].join(" ")}
     >
       {children}
@@ -161,12 +157,17 @@ function RideDriveCard({
         </div>
 
         <div className="mt-auto flex items-end justify-between gap-3 pt-1">
-          <p className="font-heading text-xl font-bold text-lime">
-            {formatINR(vehicle.perDay)}
-            <span className="ml-1 font-body text-xs font-medium text-pearl-muted">
-              /day
-            </span>
-          </p>
+          <div>
+            <p data-figure className="font-heading text-xl font-bold text-lime">
+              {formatINR(vehicle.perDay)}
+              <span className="ml-1 font-body text-xs font-medium text-pearl-muted">
+                /day
+              </span>
+            </p>
+            <p data-figure className="mt-0.5 text-xs text-pearl-muted">
+              {formatINR(vehicle.perDay * QUOTE_DAYS)} for {QUOTE_DAYS} days
+            </p>
+          </div>
           <BookCta slug={vehicle.slug} locked={locked} />
         </div>
       </div>
@@ -190,7 +191,7 @@ function HeavyFarmCard({
   // Only spec rows this machine actually has — a placeholder dash in a spec
   // table is worse than a narrower table.
   const stats = [
-    { label: "Power", value: `${specs.powerHp} hp` },
+    specs.powerHp && { label: "Power", value: `${specs.powerHp} hp` },
     specs.reachM && { label: "Reach", value: `${specs.reachM} m` },
     specs.bucketCapacityM3 && {
       label: "Bucket",
@@ -238,6 +239,11 @@ function HeavyFarmCard({
 
         <div className="flex flex-wrap gap-1.5">
           <Badge variant="urgent">Self-drive or operator</Badge>
+          {/* Licence class stated on the card itself, not just at the
+              booking gate (United Rentals CDL pattern). */}
+          <Badge variant="neutral">
+            {LICENCE_LABEL[vehicle.requiredLicence]} licence to self-drive
+          </Badge>
           {vehicle.rtoRegistered && (
             <Badge variant="trust">
               <ShieldCheck size={12} aria-hidden="true" />

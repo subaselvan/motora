@@ -5,6 +5,7 @@ colors:
   obsidian: "#0B0B0D"
   obsidian-light: "#141417"
   obsidian-lighter: "#1D1D21"
+  obsidian-sunken: "#070709"
   circuit-lime: "#C6FF3D"
   circuit-lime-dark: "#B2EE22"
   circuit-lime-active: "#9FD916"
@@ -85,7 +86,7 @@ components:
     backgroundColor: "{colors.obsidian-light}"
     rounded: "{rounded.md}"
   input:
-    backgroundColor: "{colors.obsidian-lighter}"
+    backgroundColor: "{colors.obsidian-sunken}"
     textColor: "{colors.pearl}"
     rounded: "{rounded.sm}"
 ---
@@ -96,11 +97,11 @@ components:
 
 **Creative North Star: "The Trust Ledger"**
 
-MOTORA is a rented record-book, not a storefront. Every screen is built from the vocabulary of a ledger: ruled rows, grid cells, tabular figures, and a state that is either entered or it isn't — locked or unlocked, verified or not. The system does not decorate; it accounts. Depth comes from rules and borders, never from light — there are no soft shadows anywhere in this system, on principle, not by omission.
+MOTORA is a rented record-book, not a storefront. Every screen is built from the vocabulary of a ledger: ruled rows, grid cells, tabular figures, and a state that is either entered or it isn't — locked or unlocked, verified or not. The system does not decorate; it accounts. Depth comes from rules, borders and surface tone first. The system has exactly one shadow weight, shared by every surface that casts one; it never stacks shadow weights to create hierarchy.
 
 The palette is a night garage under one instrument light: obsidian grounds throughout, circuit lime as the single functional signal (price, unlock, primary action, success), signal orange held to a narrow secondary role (badges, urgency, outline actions). The go-kart badge logo's red and yellow are a separate asset system and never enter the UI palette — that boundary is load-bearing, not a style preference.
 
-Confirmed visual rejections: no soft shadows or glows as a depth device; no light mode (dark-only, confirmed 2026-09-12); no stock photography; no gradient-hero-plus-three-cards template. Components are precise and mechanical — sharp small radii, instant colour response, no bounce or overshoot in any transition.
+Confirmed visual rejections: no stacked shadow weights and no glows as a depth device (one shared tier only); no light mode (dark-only, confirmed 2026-09-12); no stock photography; no gradient-hero-plus-three-cards template. Components are precise and mechanical — sharp small radii, instant colour response, no bounce or overshoot in any transition.
 
 **Key Characteristics:**
 - Ruled construction: 1px hairlines and grid cells carry structure and depth
@@ -121,7 +122,8 @@ Two functional colours on a black ground, plus a warm off-white for text — not
 ### Neutral
 - **Obsidian** (`#0B0B0D`): primary background, nav, footer — the ground everything else sits on.
 - **Obsidian Light** (`#141417`): card and panel surfaces one step off the ground.
-- **Obsidian Lighter** (`#1D1D21`): input fills, raised surfaces, hover backgrounds.
+- **Obsidian Lighter** (`#1D1D21`): raised surfaces and hover backgrounds.
+- **Obsidian Sunken** (`#070709`): below the page plane. Input fills and wells, which recede rather than float.
 - **Pearl** (`#F4F1E8`): primary text on dark.
 - **Pearl Dim** (`#B8B3A8`): secondary text, descriptions.
 - **Pearl Muted** (`#8A857C`): tertiary text, placeholders, captions.
@@ -163,10 +165,12 @@ Content sections run at `max-w-7xl` centred, with generous vertical padding (`py
 
 ## Elevation & Depth
 
-**No shadows.** Depth is entirely ruled: 1px charcoal borders separate every surface from its neighbour, and interactive elements signal state through border-colour shift and a small `translateY(-2px)` lift on hover — never through cast light. This was enforced during the homepage finish review, which found and removed the system's last two soft-shadow usages.
+**One shared shadow tier** (`--elev`, decided 2026-09-14 from the design scan's Airbnb pattern). The search bar, the trust ledger and hovered cards all cast the same single weight. Everything else about depth is ruled: 1px charcoal borders separate surfaces, surface tone steps from `obsidian-sunken` (inputs) through `obsidian` (page) to `obsidian-light` (cards, panels), and interactive elements signal state with a border-colour shift and a `translateY(-2px)` lift. Inputs carry `--elev-sunken`, an inset that makes them recede; that is a recess, not a second tier.
+
+This section has changed twice, so here is the record: 2026-09-12 shipped no shadows; a five-level ladder was built on 2026-09-14 on request; later that day the single tier replaced it.
 
 ### Named Rules
-**The Ruled-Not-Lit Rule.** If a surface needs to look raised, give it a border and a hover lift. If it needs a shadow to read as elevated, the composition is wrong, not the shadow's opacity.
+**The One-Tier Rule.** There is one shadow weight. If a surface needs to read as further forward than another, change its surface tone or border, never its shadow. A second shadow weight is a design error, not a refinement.
 
 ## Shapes
 
@@ -184,12 +188,12 @@ Small, consistent radii read as precise rather than soft: 6px on buttons, inputs
 ### Cards
 - **Corner Style:** 10px radius.
 - **Background:** Obsidian Light, sitting one step off the page ground.
-- **Border:** 1px Charcoal 1 at rest, Charcoal 3 on hover — the only depth cue.
-- **Hover:** `translateY(-2px)`, border brightens. No shadow.
+- **Border:** 1px Charcoal 1 at rest, Charcoal 3 on hover.
+- **Hover:** `translateY(-2px)`, border brightens to Charcoal 3, and the card takes the single `--elev` shadow. Flat at rest.
 - **Internal Padding:** 16px (mobile) to 24px (desktop) depending on card density.
 
 ### Inputs
-- **Style:** Obsidian-Lighter fill, 1px Charcoal-2 border, 6px radius.
+- **Style:** Obsidian-Sunken fill with the `--elev-sunken` inset so fields recede below the page, 1px Charcoal-2 border, 6px radius.
 - **Focus:** border and ring both switch to Circuit Lime, ring offset 2px.
 - **Error:** border switches to the semantic error red; no other component currently uses the warning/info tokens.
 
@@ -213,7 +217,7 @@ A ruled panel: a score readout in tabular Circuit Lime numerals at display weigh
 - **Do** ship orange text bold or larger when it appears below body size.
 
 ### Don't:
-- **Don't** use `box-shadow` for elevation anywhere. Borders and translate only.
+- **Don't** introduce a second shadow weight. `--elev` and the `--elev-sunken` inset are the only shadows in the system.
 - **Don't** let the logo's red or yellow enter a component, a token, or an inline style.
 - **Don't** set a font-weight above 500 on Inter or below 500 on Space Grotesk — both faces are self-hosted with narrow ranges and a heavier weight synthesises rather than renders.
 - **Don't** build a light theme. Dark-only is confirmed, not a placeholder.

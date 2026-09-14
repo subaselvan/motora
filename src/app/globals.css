@@ -57,22 +57,17 @@
   --duration-fast: 180ms;
   --duration-base: 240ms;
 
-  /* Elevation — five named levels (DESIGN_SYSTEM.md). A ladder, not a switch.
-     Levels 0-1 stay ruled: borders and surface tone do the work, per the
-     anti-slop rule. Levels 2-4 add real cast depth, reserved for surfaces
-     that must genuinely come forward. Every level pairs a shadow with a
-     surface tone and a border strength — using the shadow alone is what made
-     everything read flat and identical. */
-  --elev-0: none;                                    /* page plane */
-  --elev-1: none;                                    /* resting card: border only */
-  --elev-2: 0 1px 2px rgba(0, 0, 0, 0.55),
-            0 6px 16px -6px rgba(0, 0, 0, 0.55);     /* raised card, hover */
-  --elev-3: 0 2px 6px rgba(0, 0, 0, 0.6),
-            0 18px 36px -14px rgba(0, 0, 0, 0.72);   /* focal panel, dropdown */
-  --elev-4: 0 4px 12px rgba(0, 0, 0, 0.68),
-            0 32px 64px -18px rgba(0, 0, 0, 0.82);   /* modal, overlay */
-  /* Inset, for level -1 surfaces (inputs, wells). */
-  --elev-sunken: inset 0 1px 2px rgba(0, 0, 0, 0.6);
+  /* Elevation — ONE shared shadow tier (decided 2026-09-14, following the
+     Airbnb pattern in docs/research/DESIGN_INSPIRATION_SCAN.md; supersedes
+     the five-level ladder from the same day). Cards, focal panels and the
+     search bar all share this single weight. Depth differences come from
+     surface tone (sunken -> page -> light -> lighter) and border strength,
+     not from stacking shadow weights. Tinted toward the obsidian hue rather
+     than pure black. */
+  --elev: 0 1px 2px rgba(4, 4, 8, 0.55),
+          0 10px 24px -10px rgba(4, 4, 8, 0.65);
+  /* A recess, not an elevation tier: inputs and wells sit below the page. */
+  --elev-sunken: inset 0 1px 2px rgba(4, 4, 8, 0.6);
 }
 
 @theme inline {
@@ -118,10 +113,7 @@
   --radius-xl: var(--radius-xl);
   --radius-full: var(--radius-full);
 
-  --shadow-elev-1: var(--elev-1);
-  --shadow-elev-2: var(--elev-2);
-  --shadow-elev-3: var(--elev-3);
-  --shadow-elev-4: var(--elev-4);
+  --shadow-elev: var(--elev);
   --shadow-sunken: var(--elev-sunken);
 }
 

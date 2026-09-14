@@ -47,7 +47,7 @@ export function Hero() {
     e.preventDefault();
     const params = new URLSearchParams();
     if (query) params.set("q", query);
-    if (location) params.set("location", location);
+    if (location) params.set("city", location);
     router.push(`/search${params.toString() ? `?${params}` : ""}`);
   }
 
@@ -87,9 +87,8 @@ export function Hero() {
 
             <form
               onSubmit={handleSubmit}
-              /* Elevation 3 — the page's primary action, so it sits furthest
-                 forward of anything in the hero. */
-              className="mt-8 flex flex-col gap-2 rounded-[var(--radius-lg)] border border-charcoal-2 bg-obsidian-light p-2 shadow-[var(--elev-3)] sm:flex-row"
+              /* Shares the single shadow tier; the page's primary action. */
+              className="mt-8 flex flex-col gap-2 rounded-[var(--radius-lg)] border border-charcoal-2 bg-obsidian-light p-2 shadow-[var(--elev)] sm:flex-row"
             >
               <div className="relative min-w-0 flex-1">
                 <label htmlFor={queryId} className="sr-only">
@@ -137,7 +136,7 @@ export function Hero() {
               </Button>
             </form>
 
-            {/* Elevation 0 — deliberately the flattest thing in the hero.
+            {/* Deliberately the flattest thing in the hero, no shadow.
                 One continuous strip on the page plane, hairline-divided,
                 so it supports the search bar instead of competing with it. */}
             <div className="mt-7 border-t border-charcoal-1 pt-5">

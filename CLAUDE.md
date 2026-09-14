@@ -12,6 +12,7 @@ Multi-category vehicle rental platform (bikes, scooters, cars, EVs, trucks, JCBs
 - `RESEARCH_BRIEF.md` — distilled 10-platform competitive teardown. Read this for day-to-day building.
 - `DESIGN_SYSTEM.md` + `design-tokens.json` — colour/type/spacing/component direction. Direction, not mandate; `src/app/globals.css` is the source of truth for implemented tokens.
 - `BUILD_PROMPT.md` — original build kickoff brief.
+- `docs/research/DESIGN_INSPIRATION_SCAN.md` — live UI teardown of Turo, Zoomcar, United Rentals, Airbnb and CRED (2026-09-14). Caveats: it cites `competitive-research.md` and `decisions.md`, **neither exists in this repo** (do not fabricate them); and its "still-to-be-built hero visual" line is stale, since the 3D kart shipped in `1895614`.
 - Note: these describe themselves as direction rather than a locked spec. Where they conflict with this file, this file records the decision that was actually made and why.
 
 ## Tech stack (locked)
@@ -83,19 +84,19 @@ text-5xl  61px/64px  800 Space Grotesk  — display text
 
 **Motion**: `cubic-bezier(.4,0,.2,1)`, 180ms (fast) / 240ms (base). Tokens `--ease-standard`, `--duration-fast`, `--duration-base`. `prefers-reduced-motion` is already handled globally in globals.css.
 
-**Elevation**: no soft shadows. Depth is ruled — 1px charcoal hairlines, grid cells, border-colour and translateY shifts on hover. Confirmed during the homepage finish review 2026-09-12, which found and removed the last soft-shadow usages; the `--shadow-1..4`/`--shadow-glow` tokens still declared in `globals.css` are legacy and unused — treat them as removable, not as guidance.
+**Elevation**: ONE shared shadow tier (`--elev`), decided 2026-09-14 from `docs/research/DESIGN_INSPIRATION_SCAN.md` (Airbnb pattern). History, so nobody reverts by accident: 2026-09-12 shipped no shadows at all; earlier on 2026-09-14 a five-level ladder (`--elev-0..4`) was built on request; later the same day the user chose the scan's single tier instead. Cards, the trust ledger and the search bar all share `--elev`. `--elev-sunken` is an inset for inputs and wells: a recess, not an elevation tier. Depth differences come from surface tone (`obsidian-sunken` → `obsidian` → `obsidian-light` → `obsidian-lighter`) and border strength, never from stacking shadow weights.
 
 **Grid**: 12-column, 24px gutter desktop / 16px mobile. Breakpoints sm 640 / md 768 / lg 1024 / xl 1280 / 2xl 1536.
 
 **Components**:
 - Buttons: primary = lime fill / obsidian text; secondary = transparent / orange text / orange border; ghost = transparent / pearl text. Sizes sm(32) md(40) lg(48) xl(56). Radius sm. There is no separate `lime` variant — primary *is* lime.
-- Inputs: obsidian-lighter fill, charcoal-2 border; focus = lime border + 2px lime ring, offset 2px; error border error-red.
-- Cards: surface bg, radius-md, 1px border (prefer 1px borders over soft shadows), hover = translateY(-2px) + shadow-3.
+- Inputs: obsidian-sunken fill with the `--elev-sunken` inset (they recede below the page), charcoal-2 border; focus = lime border + 2px lime ring, offset 2px; error border error-red.
+- Cards: surface bg, radius-md, 1px border, flat at rest; hover = translateY(-2px) + the single `--elev` shadow.
 - Focus rings are lime everywhere.
 
 ## Information architecture (locked sitemap)
 ```
-/ (homepage) — search-first hero, categories, how-it-works, trust bar, featured vehicles, host CTA  [BUILT]
+/ (homepage) — hero (search, guarantee strip, 3D kart, trust ledger, category rail) → two tracks with geo+intent rails → booking spine → host CTA → footer with long-tail city links  [BUILT]
 /search — filters (brand/model/CC/category/price/location), results, map/list toggle
 /vehicle/:id — gallery, specs, pricing, owner info, availability calendar, reviews, GPS preview, required license, (Heavy & Farm) both self-drive and operator-included rates, Book Now
 /booking/:vehicleId — dates+delivery → (Heavy & Farm) self-drive vs operator-included mode select → license & KYC verification → photo check-in → itemised fees → mock payment → confirmation
@@ -117,6 +118,15 @@ Because it is a booking-time toggle, every Heavy & Farm listing needs both modes
 License gating is tiered by category (Yulu pattern): none/low-speed EV → standard DL → commercial for heavy self-drive. Every vehicle carries a `requiredLicense` field; operator-included bookings bypass the renter's own license requirement since MOTORA supplies the operator.
 
 Supersedes the previous "one flow, all self-drive" entry (commit 1b5decf), which itself superseded the original two-track split. Net effect: the two-track model is back, with the operator decision moved to booking time.
+
+## Homepage patterns (decided 2026-09-14, from the design scan)
+- **Trust-score volume:** quiet everywhere, loud exactly once. The one loud moment is the homepage trust ledger (labelled a *sample* record). Cards never show a score, only "Unlocks at N trust" when locked. When `/vehicle/[slug]` is built, decide whether the loud moment moves there; until then the homepage keeps it, because moving it now would leave the site with no trust moment at all.
+- **Geo + intent rails:** homepage inventory is horizontal scroll-snap rails headed `[qualifier] + rental + in/near + [place]` (e.g. "Backhoe and excavator rental near Chennai"), defined in `RAILS` in `src/lib/vehicles.ts`. Each is the seed of a future geo landing page. No carousel library.
+- **Badges on the visual:** trust and verification badges sit on the card's visual plate, top-left, not in a metadata line. Heavy & Farm cards have no plate by the locked dual-card design, so their badges stay in the body; that is intentional.
+- **Licence disclosure in page copy:** licence-class requirements are stated as plain copy on the track and on the card, not only at the booking gate (United Rentals CDL pattern). Use only the classes in PRODUCT.md: none, two-wheeler, LMV, commercial.
+- **Price with multi-day total:** Ride & Drive cards show the 3-day total beside the daily rate (Turo pattern).
+- **SEO long-tail footer:** a plain, walled-off city × category link section below the brand footer, **derived from inventory**, so no link lands on an empty results page.
+- **Deferred:** the CRED-style ceremonial confirmation belongs on photo check-in completion, which doesn't exist yet. Keep search, filtering and browsing fast and unanimated.
 
 ## Booking flow spine
 One-time tiered license/KYC approval, reused across all categories → (Heavy & Farm only) self-drive vs operator-included mode select → timestamped photo check-in/check-out feeding the trust score → all fees itemised upfront, no checkout surprises → guaranteed live-human escalation path during an active rental.

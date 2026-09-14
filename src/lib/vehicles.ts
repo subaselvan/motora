@@ -23,8 +23,10 @@ export type RideDriveSpecs = {
   transmission: "manual" | "automatic";
 };
 
+/** Every field is optional on purpose: a spec we can't source is omitted, not
+ *  guessed. The card renders only the rows a machine actually has. */
 export type HeavyFarmSpecs = {
-  powerHp: number;
+  powerHp?: number;
   /** Backhoes and excavators. */
   reachM?: number;
   bucketCapacityM3?: number;
@@ -262,7 +264,288 @@ export const VEHICLES: Vehicle[] = [
       operatingWeightKg: 21400,
     },
   },
+
+  /* ── Rail fill (2026-09-14) ───────────────────────────────────
+     Added so each homepage rail holds enough cards to read as a rail.
+     A bounded expansion, not the queued comprehensive dataset. Heavy
+     spec figures are approximate class values; any we could not source
+     with confidence are omitted rather than guessed. */
+
+  // Two-wheelers, Chennai
+  {
+    id: "re-hunter-350",
+    slug: "royal-enfield-hunter-350",
+    track: "ride-drive",
+    brand: "Royal Enfield",
+    model: "Hunter 350",
+    category: "bikes",
+    city: "Chennai",
+    requiredLicence: "two-wheeler",
+    perDay: 849,
+    rating: 4.7,
+    trips: 162,
+    minTrustScore: 10,
+    verified: true,
+    specs: { engineCc: 349, seats: 2, transmission: "manual" },
+  },
+  {
+    id: "bajaj-pulsar-ns200",
+    slug: "bajaj-pulsar-ns200",
+    track: "ride-drive",
+    brand: "Bajaj",
+    model: "Pulsar NS200",
+    category: "bikes",
+    city: "Chennai",
+    requiredLicence: "two-wheeler",
+    perDay: 649,
+    rating: 4.5,
+    trips: 241,
+    minTrustScore: 10,
+    verified: true,
+    specs: { engineCc: 199, seats: 2, transmission: "manual" },
+  },
+  {
+    id: "tvs-jupiter",
+    slug: "tvs-jupiter",
+    track: "ride-drive",
+    brand: "TVS",
+    model: "Jupiter",
+    category: "scooters",
+    city: "Chennai",
+    requiredLicence: "two-wheeler",
+    perDay: 379,
+    rating: 4.6,
+    trips: 438,
+    minTrustScore: 0,
+    verified: true,
+    specs: { engineCc: 110, seats: 2, transmission: "automatic" },
+  },
+  {
+    id: "suzuki-access-125",
+    slug: "suzuki-access-125",
+    track: "ride-drive",
+    brand: "Suzuki",
+    model: "Access 125",
+    category: "scooters",
+    city: "Chennai",
+    requiredLicence: "two-wheeler",
+    perDay: 419,
+    rating: 4.8,
+    trips: 356,
+    minTrustScore: 0,
+    verified: true,
+    specs: { engineCc: 124, seats: 2, transmission: "automatic" },
+  },
+
+  // Cars and EVs, Chennai
+  {
+    id: "hyundai-creta",
+    slug: "hyundai-creta",
+    track: "ride-drive",
+    brand: "Hyundai",
+    model: "Creta",
+    category: "cars",
+    city: "Chennai",
+    requiredLicence: "lmv",
+    perDay: 2899,
+    rating: 4.8,
+    trips: 187,
+    minTrustScore: 20,
+    verified: true,
+    specs: { engineCc: 1497, seats: 5, transmission: "manual" },
+  },
+  {
+    id: "tata-punch-ev",
+    slug: "tata-punch-ev",
+    track: "ride-drive",
+    brand: "Tata",
+    model: "Punch EV",
+    category: "evs",
+    city: "Chennai",
+    requiredLicence: "lmv",
+    perDay: 1999,
+    rating: 4.7,
+    trips: 94,
+    minTrustScore: 40,
+    verified: true,
+    specs: { rangeKm: 421, seats: 5, transmission: "automatic" },
+  },
+  {
+    id: "toyota-innova-crysta",
+    slug: "toyota-innova-crysta",
+    track: "ride-drive",
+    brand: "Toyota",
+    model: "Innova Crysta",
+    category: "cars",
+    city: "Chennai",
+    requiredLicence: "lmv",
+    perDay: 3799,
+    rating: 4.9,
+    trips: 143,
+    minTrustScore: 20,
+    verified: true,
+    specs: { engineCc: 2393, seats: 7, transmission: "manual" },
+  },
+
+  // Backhoes and excavators, Chennai
+  {
+    id: "jcb-3dx-plus",
+    slug: "jcb-3dx-plus",
+    track: "heavy-farm",
+    brand: "JCB",
+    model: "3DX Plus",
+    category: "jcbs",
+    city: "Chennai",
+    requiredLicence: "commercial",
+    perDay: 10900,
+    perDayWithOperator: 13400,
+    rating: 4.6,
+    trips: 48,
+    minTrustScore: 75,
+    rtoRegistered: true,
+    specs: { powerHp: 76, bucketCapacityM3: 1.1, operatingWeightKg: 7700 },
+  },
+  {
+    id: "cat-424",
+    slug: "cat-424-backhoe",
+    track: "heavy-farm",
+    brand: "CAT",
+    model: "424 Backhoe",
+    category: "jcbs",
+    city: "Chennai",
+    requiredLicence: "commercial",
+    perDay: 11800,
+    perDayWithOperator: 14600,
+    rating: 4.8,
+    trips: 31,
+    minTrustScore: 75,
+    rtoRegistered: true,
+    specs: { powerHp: 74, bucketCapacityM3: 1.0, operatingWeightKg: 7700 },
+  },
+  {
+    id: "tata-hitachi-ex200",
+    slug: "tata-hitachi-ex200lc",
+    track: "heavy-farm",
+    brand: "Tata Hitachi",
+    model: "EX 200LC",
+    category: "jcbs",
+    city: "Chennai",
+    requiredLicence: "commercial",
+    perDay: 17400,
+    perDayWithOperator: 20900,
+    rating: 4.7,
+    trips: 19,
+    minTrustScore: 75,
+    rtoRegistered: true,
+    specs: { reachM: 9.9, bucketCapacityM3: 0.9, operatingWeightKg: 20200 },
+  },
+
+  // Tractors, Madurai
+  {
+    id: "swaraj-744-fe",
+    slug: "swaraj-744-fe",
+    track: "heavy-farm",
+    brand: "Swaraj",
+    model: "744 FE",
+    category: "tractors",
+    city: "Madurai",
+    requiredLicence: "commercial",
+    perDay: 2600,
+    perDayWithOperator: 3400,
+    rating: 4.7,
+    trips: 176,
+    minTrustScore: 45,
+    rtoRegistered: true,
+    specs: { powerHp: 48 },
+  },
+  {
+    id: "john-deere-5050d",
+    slug: "john-deere-5050d",
+    track: "heavy-farm",
+    brand: "John Deere",
+    model: "5050 D",
+    category: "tractors",
+    city: "Madurai",
+    requiredLicence: "commercial",
+    perDay: 3100,
+    perDayWithOperator: 3950,
+    rating: 4.8,
+    trips: 122,
+    minTrustScore: 45,
+    rtoRegistered: true,
+    specs: { powerHp: 50 },
+  },
+  {
+    id: "massey-ferguson-1035",
+    slug: "massey-ferguson-1035-di",
+    track: "heavy-farm",
+    brand: "Massey Ferguson",
+    model: "1035 DI",
+    category: "tractors",
+    city: "Madurai",
+    requiredLicence: "commercial",
+    perDay: 2150,
+    perDayWithOperator: 2900,
+    rating: 4.5,
+    trips: 209,
+    minTrustScore: 45,
+    rtoRegistered: true,
+    specs: { powerHp: 36 },
+  },
 ];
+
+/** Homepage rails. Headlines follow the Turo pattern from
+ *  docs/research/DESIGN_INSPIRATION_SCAN.md: qualifier + rental + in/near +
+ *  place. Each doubles as the seed of a future geo landing page. */
+export const RAILS: {
+  id: string;
+  track: Track;
+  title: string;
+  href: string;
+  filter: (v: Vehicle) => boolean;
+}[] = [
+  {
+    id: "two-wheelers-chennai",
+    track: "ride-drive",
+    title: "Self-drive two-wheelers in Chennai",
+    href: "/search?track=ride-drive&city=chennai",
+    filter: (v) =>
+      v.city === "Chennai" && (v.category === "bikes" || v.category === "scooters"),
+  },
+  {
+    id: "cars-evs-chennai",
+    track: "ride-drive",
+    title: "Weekend car and EV rental in Chennai",
+    href: "/search?track=ride-drive&city=chennai",
+    filter: (v) =>
+      v.city === "Chennai" && (v.category === "cars" || v.category === "evs"),
+  },
+  {
+    id: "backhoes-chennai",
+    track: "heavy-farm",
+    title: "Backhoe and excavator rental near Chennai",
+    href: "/search?category=jcbs&city=chennai",
+    filter: (v) => v.city === "Chennai" && v.category === "jcbs",
+  },
+  {
+    id: "tractors-madurai",
+    track: "heavy-farm",
+    title: "Tractor rental for the season in Madurai",
+    href: "/search?category=tractors&city=madurai",
+    filter: (v) => v.city === "Madurai" && v.category === "tractors",
+  },
+];
+
+/** Cities that actually carry inventory. Crawler links are limited to
+ *  these so none of them lands on an empty results page. */
+export const INVENTORY_CITIES = Array.from(new Set(VEHICLES.map((v) => v.city)));
+
+export const LICENCE_LABEL: Record<LicenceClass, string> = {
+  none: "No licence",
+  "two-wheeler": "Two-wheeler",
+  lmv: "LMV",
+  commercial: "Commercial",
+};
 
 export const formatINR = (value: number) =>
   `₹${value.toLocaleString("en-IN")}`;
