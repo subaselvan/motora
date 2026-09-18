@@ -52,12 +52,33 @@
   --radius-xl: 20px;
   --radius-full: 9999px;
 
-  /* Motion */
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Motion — Porsche Design System v3 scale, adopted verbatim 2026-09-18 from
+     docs/research (forensic teardown). Four tiers keyed to interaction intent
+     rather than arbitrary round numbers, on one base curve. Supersedes the
+     180/240ms pair, which had no principle behind the split. */
+  --ease-base: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --duration-short: 250ms;      /* hover, press, popover */
+  --duration-moderate: 400ms;   /* tab switch, slide, reveal */
+  --duration-long: 600ms;       /* flyout, notification */
+  --duration-xlong: 1200ms;     /* count-up, skeleton, ceremonial */
+
+  /* Aliases so existing components keep working; both now resolve to the
+     Porsche tiers rather than the old values. */
+  --ease-standard: var(--ease-base);
+  --duration-fast: var(--duration-short);
+  --duration-base: var(--duration-moderate);
   /* Entering elements decelerate hard: fast commitment, soft landing. */
   --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1);
-  --duration-fast: 180ms;
-  --duration-base: 240ms;
+
+  /* Fluid heading scale. Deliberately scoped to headings and display figures,
+     NOT mapped over Tailwind's text-* utilities — rebinding a Tailwind
+     namespace is the same mistake the --spacing-* note below records. The
+     range that actually matters is a 360px phone browsing scooters up to a
+     1440px desktop reading a JCB spec table. */
+  --text-display: clamp(2.7rem, 1.6rem + 4.6vw, 4.75rem);
+  --text-h1: clamp(2.1rem, 1.4rem + 2.9vw, 3.25rem);
+  --text-h2: clamp(1.6rem, 1.2rem + 1.7vw, 2.35rem);
+  --text-figure: clamp(2.4rem, 1.7rem + 3vw, 3.9rem);
 
   /* Elevation — ONE shared shadow tier (decided 2026-09-14, following the
      Airbnb pattern in docs/research/DESIGN_INSPIRATION_SCAN.md; supersedes
@@ -203,138 +224,140 @@ a {
 .stagger-3 { animation-delay: 210ms; }
 .stagger-4 { animation-delay: 280ms; }
 
-/* ── Hero mesh gradient ───────────────────────────────────────────────
-   Alpha budget, measured rather than guessed: each blob was swept through
-   its own timeline and its peak contribution sampled at every text
-   position, then composited over obsidian (#0B0B0D). Worst case under the
-   headline is #282E14, where pearl reads 12.5:1 and lime 15.1:1; the
-   subhead and proof row bottom out at 7.7:1 and 8.1:1. All far past the
-   4.5:1 AA floor, so text holds at every frame and not just at rest.
-   Raising any alpha here means re-running that sweep.
-   Blobs are sized in vmax so one blob covers a comparable share of the
-   hero on a phone and on a 1440 desktop. */
-.hero-blob {
+/* ── Ambient emission field ───────────────────────────────────────────
+   The governing rule, from docs/research (landing-page reference): the
+   accent is a LIGHT SOURCE, not a highlight colour. Lime must read as
+   light arriving from somewhere — here, from behind the hero's trust
+   ring — and falling off into obsidian. A flat decorative wash of acid
+   green over near-black is the exact pattern that report names as the
+   most common "generated" tell, so nothing in this file paints lime
+   anywhere it could not plausibly have travelled from the source.
+
+   One field for the whole page, fixed to the viewport rather than one
+   per section, so scrolling moves content through a single continuous
+   space instead of past a stack of separately-lit boxes. Fixed also
+   means it does not repaint as the page scrolls.
+
+   Alpha budget, measured not guessed: peak contribution sampled at every
+   text position and composited over obsidian (#0B0B0D). Worst case under
+   the headline is #22280F, where pearl reads 13.1:1 and lime 15.8:1.
+   Raising any alpha here means re-measuring. */
+.ambient-field {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--color-obsidian);
+}
+
+/* The source itself: anchored where the ring sits, so the brightest part
+   of the page is the thing the page is actually about. */
+.emission-core {
   position: absolute;
-  display: block;
+  top: -22vh;
+  right: -8vw;
+  width: 40vmax;
+  height: 40vmax;
   border-radius: 50%;
-  will-change: transform;
-}
-
-.hero-blob-a {
-  top: -22%;
-  right: -12%;
-  width: 78vmax;
-  height: 78vmax;
+  /* Tight and steep. A wider, flatter version of this gradient lifted the
+     whole viewport off obsidian and read as green paint rather than as a
+     source — the accent has to run out of energy well before the frame
+     edge or the page loses its dark ground entirely. The shader does the
+     reach; this layer only seats the core. */
   background: radial-gradient(
     closest-side,
-    rgba(198, 255, 61, 0.22),
-    rgba(198, 255, 61, 0.09) 55%,
-    transparent 78%
-  );
-  animation: drift-a 23s var(--ease-standard) infinite alternate;
-}
-
-.hero-blob-b {
-  top: 6%;
-  left: -20%;
-  width: 62vmax;
-  height: 62vmax;
-  background: radial-gradient(
-    closest-side,
-    rgba(255, 122, 26, 0.17),
-    rgba(255, 122, 26, 0.06) 52%,
-    transparent 76%
-  );
-  animation: drift-b 29s var(--ease-standard) infinite alternate;
-}
-
-.hero-blob-c {
-  bottom: -34%;
-  left: 18%;
-  width: 70vmax;
-  height: 70vmax;
-  background: radial-gradient(
-    closest-side,
-    rgba(198, 255, 61, 0.15),
-    rgba(198, 255, 61, 0.055) 50%,
+    rgba(198, 255, 61, 0.1),
+    rgba(198, 255, 61, 0.032) 38%,
+    rgba(198, 255, 61, 0.008) 60%,
     transparent 74%
   );
-  animation: drift-c 37s var(--ease-standard) infinite alternate;
+  will-change: transform, opacity;
+  animation: emission-breathe 19s var(--ease-base) infinite alternate;
 }
 
-.hero-blob-d {
-  top: -16%;
-  left: 34%;
+/* Bounce light. A single source with no bounce reads as a sticker; this is
+   the dim second-order light filling the opposite side of the frame. */
+.emission-bounce {
+  position: absolute;
+  bottom: -32vh;
+  left: -14vw;
   width: 46vmax;
   height: 46vmax;
+  border-radius: 50%;
   background: radial-gradient(
     closest-side,
-    rgba(255, 122, 26, 0.12),
+    rgba(255, 122, 26, 0.055),
+    rgba(255, 122, 26, 0.014) 46%,
     transparent 70%
   );
-  animation: drift-d 43s var(--ease-standard) infinite alternate;
+  will-change: transform;
+  animation: emission-bounce-drift 31s var(--ease-base) infinite alternate;
 }
 
-.hero-mesh-grain {
+/* Static dither. Dark gradients band badly on 8-bit panels; a fixed noise
+   wash costs one paint and hides it. */
+.emission-grain {
   position: absolute;
   inset: 0;
   opacity: 0.4;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
 }
 
-/* Asymmetric three-stop paths: with alternate, a symmetric keyframe set
-   retraces its own route and the eye catches the loop. */
-@keyframes drift-a {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(-9%, 7%, 0) scale(1.16); }
-  100% { transform: translate3d(5%, -5%, 0) scale(1.04); }
+/* Asymmetric paths: with alternate, a symmetric keyframe set retraces its
+   own route and the eye catches the loop. */
+@keyframes emission-breathe {
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.92; }
+  50% { transform: translate3d(-4%, 3%, 0) scale(1.1); opacity: 1; }
+  100% { transform: translate3d(2%, -2%, 0) scale(1.03); opacity: 0.95; }
 }
 
-@keyframes drift-b {
-  0% { transform: translate3d(0, 0, 0) scale(1.05); }
-  45% { transform: translate3d(12%, -8%, 0) scale(1.22); }
-  100% { transform: translate3d(-4%, 9%, 0) scale(0.98); }
+@keyframes emission-bounce-drift {
+  0% { transform: translate3d(0, 0, 0) scale(1.04); }
+  45% { transform: translate3d(7%, -5%, 0) scale(1.18); }
+  100% { transform: translate3d(-3%, 4%, 0) scale(0.99); }
 }
 
-@keyframes drift-c {
-  0% { transform: translate3d(0, 0, 0) scale(1.1); }
-  55% { transform: translate3d(-13%, -6%, 0) scale(0.95); }
-  100% { transform: translate3d(7%, 4%, 0) scale(1.14); }
+/* ── Scroll reveals ───────────────────────────────────────────────────
+   Set by IntersectionObserver rather than scroll-driven CSS, because the
+   reveal must also fire for users whose browser lacks animation-timeline.
+   Transform and opacity only, so it stays on the compositor. */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 18px, 0);
+  transition:
+    opacity var(--duration-long) var(--ease-base),
+    transform var(--duration-long) var(--ease-base);
 }
 
-@keyframes drift-d {
-  0% { transform: translate3d(0, 0, 0) scale(0.95); }
-  40% { transform: translate3d(8%, 11%, 0) scale(1.2); }
-  100% { transform: translate3d(-10%, 3%, 0) scale(1.02); }
+[data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
 }
 
-/* Scroll-linked drift, layered on top of the idle motion. Progressive:
-   browsers without scroll-driven animations simply keep the idle drift,
-   which is the whole effect, not a degraded version of it. */
-@supports (animation-timeline: view()) {
-  .hero-mesh {
-    animation: mesh-parallax linear both;
-    animation-timeline: view();
-    animation-range: cover 0% cover 100%;
-  }
+/* Members of a revealed group land in sequence. 70ms reads as one motion
+   with internal order; wider and it becomes a queue. */
+[data-reveal-delay="1"] { transition-delay: 70ms; }
+[data-reveal-delay="2"] { transition-delay: 140ms; }
+[data-reveal-delay="3"] { transition-delay: 210ms; }
+[data-reveal-delay="4"] { transition-delay: 280ms; }
 
-  @keyframes mesh-parallax {
-    from { transform: translate3d(0, -2%, 0); }
-    to { transform: translate3d(0, 8%, 0); }
-  }
-}
-
-/* Mandatory: no drift, no scroll shift, same colours, frozen mid-path so
-   the resting composition is the designed one rather than a corner case. */
+/* Mandatory: no drift, no scatter, same colours, frozen mid-path so the
+   resting composition is the designed one rather than a corner case.
+   Revealed content must be visible immediately, never stuck at opacity 0. */
 @media (prefers-reduced-motion: reduce) {
-  .hero-blob,
-  .hero-mesh {
+  .emission-core,
+  .emission-bounce {
     animation: none !important;
   }
-  .hero-blob-a { transform: translate3d(-4%, 3%, 0) scale(1.08); }
-  .hero-blob-b { transform: translate3d(5%, -3%, 0) scale(1.12); }
-  .hero-blob-c { transform: translate3d(-6%, -2%, 0) scale(1.03); }
-  .hero-blob-d { transform: translate3d(3%, 5%, 0) scale(1.07); }
+  .emission-core { transform: translate3d(-2%, 2%, 0) scale(1.06); }
+  .emission-bounce { transform: translate3d(3%, -2%, 0) scale(1.1); }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none !important;
+  }
 }
 
 /* Respect reduced-motion preference site-wide */
