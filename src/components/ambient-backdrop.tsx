@@ -94,11 +94,7 @@ export function AmbientBackdrop() {
         data-pointer-aura
       />
       <span data-parallax-depth="1.4" data-parallax-layer className="mesh-gradient" />
-      <span data-parallax-depth="4" data-parallax-layer className="wireframe wireframe-one" />
-      <span data-parallax-depth="2.8" data-parallax-layer className="wireframe wireframe-two" />
-      <span data-parallax-depth="3.6" data-parallax-layer className="geometry geometry-orbit" />
-      <span data-parallax-depth="2.2" data-parallax-layer className="geometry geometry-frame" />
-      <span data-parallax-depth="1.2" data-parallax-layer className="geometry geometry-slab" />
+      <span data-parallax-depth="1.8" data-parallax-layer className="contour-motif" />
       <span className="emission-core" />
       <span className="emission-bounce" />
       <AmbientField />
