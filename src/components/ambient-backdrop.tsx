@@ -87,6 +87,7 @@ export function AmbientBackdrop() {
 
   return (
     <div ref={backdropRef} aria-hidden="true" className="ambient-field">
+      <AmbientField />
       <span
         data-parallax-depth="2.5"
         data-parallax-layer
@@ -97,7 +98,6 @@ export function AmbientBackdrop() {
       <span data-parallax-depth="1.8" data-parallax-layer className="contour-motif" />
       <span className="emission-core" />
       <span className="emission-bounce" />
-      <AmbientField />
       <span className="emission-grain" />
     </div>
   );
