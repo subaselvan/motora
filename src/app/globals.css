@@ -249,8 +249,8 @@ a {
   pointer-events: none;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 78% -8%, rgba(198, 255, 61, 0.12), transparent 34%),
-    radial-gradient(ellipse at 8% 108%, rgba(72, 255, 157, 0.07), transparent 38%),
+    radial-gradient(ellipse at 78% -8%, rgba(198, 255, 61, 0.09), transparent 34%),
+    radial-gradient(ellipse at 8% 108%, rgba(72, 255, 157, 0.035), transparent 38%),
     #050608;
   isolation: isolate;
 }
@@ -262,8 +262,7 @@ a {
 
 .aura-glow,
 .mesh-gradient,
-.wireframe,
-.geometry {
+.contour-motif {
   position: absolute;
   inset: -16%;
   pointer-events: none;
@@ -284,120 +283,39 @@ a {
   background:
     radial-gradient(
       ellipse at 72% 18%,
-      rgba(198, 255, 61, 0.22),
-      rgba(198, 255, 61, 0.07) 24%,
+      rgba(198, 255, 61, 0.16),
+      rgba(198, 255, 61, 0.045) 24%,
       transparent 56%
     ),
-    radial-gradient(ellipse at 40% 58%, rgba(94, 255, 167, 0.08), transparent 42%);
-  filter: blur(28px);
-  opacity: 0.95;
+    radial-gradient(ellipse at 40% 58%, rgba(94, 255, 167, 0.04), transparent 42%);
+  filter: blur(34px);
+  opacity: 0.9;
 }
 
 /* Low-contrast mesh adds depth without becoming a green wash. */
 .mesh-gradient {
   background:
-    radial-gradient(ellipse at 18% 72%, rgba(198, 255, 61, 0.075), transparent 40%),
-    linear-gradient(122deg, transparent 20%, rgba(198, 255, 61, 0.05) 48%, transparent 72%),
-    linear-gradient(28deg, transparent 30%, rgba(102, 255, 180, 0.035) 50%, transparent 74%);
-  opacity: 0.92;
+    radial-gradient(ellipse at 18% 72%, rgba(198, 255, 61, 0.04), transparent 40%),
+    linear-gradient(122deg, transparent 20%, rgba(198, 255, 61, 0.025) 48%, transparent 72%),
+    linear-gradient(28deg, transparent 30%, rgba(102, 255, 180, 0.018) 50%, transparent 74%);
+  opacity: 0.8;
   mix-blend-mode: screen;
 }
 
-/* Thin geometry keeps the background tactile while the low opacity lets
-   cards, images, and headings remain the visual foreground. */
-.wireframe {
-  inset: -30%;
-  opacity: 0.18;
-  background-image:
-    linear-gradient(rgba(198, 255, 61, 0.34) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(198, 255, 61, 0.34) 1px, transparent 1px);
-  background-size: 72px 72px;
-  mask-image: radial-gradient(ellipse at center, black 0%, transparent 74%);
-  transform:
-    perspective(900px)
-    translate3d(0, var(--parallax-y, 0%), 0)
-    rotateX(58deg)
-    rotateZ(-13deg)
-    scale(1.25);
-  transform-origin: center;
-}
-
-.wireframe-one {
-  top: 44%;
-  left: -12%;
-}
-
-.wireframe-two {
-  top: -22%;
-  left: 38%;
-  opacity: 0.11;
-  background-size: 104px 104px;
-  transform:
-    perspective(900px)
-    translate3d(0, var(--parallax-y, 0%), 0)
-    rotateX(58deg)
-    rotateZ(18deg)
-    scale(1.25);
-}
-
-.geometry {
-  inset: auto;
-  border: 1px solid rgba(198, 255, 61, 0.16);
-  background: linear-gradient(135deg, rgba(198, 255, 61, 0.075), transparent 62%);
-  box-shadow: inset 0 0 0 1px rgba(198, 255, 61, 0.035);
-  mix-blend-mode: screen;
-}
-
-.geometry-orbit {
-  top: 8vh;
-  right: 8vw;
-  width: min(34vw, 520px);
-  height: min(34vw, 520px);
-  border-radius: 50%;
+.contour-motif {
+  inset: -18%;
+  opacity: 0.1;
+  background:
+    radial-gradient(ellipse at 77% 18%, transparent 0 22%, rgba(198, 255, 61, 0.32) 22.15%, transparent 22.35% 31%, rgba(198, 255, 61, 0.17) 31.15%, transparent 31.35% 42%, rgba(198, 255, 61, 0.1) 42.15%, transparent 42.35%),
+    linear-gradient(115deg, transparent 44%, rgba(198, 255, 61, 0.08) 44.15%, transparent 44.35%);
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
   transform:
     translate3d(
       calc(var(--pointer-x, 0) * 1px),
       calc(var(--pointer-y, 0) * 1px + var(--parallax-y, 0%)),
       0
     )
-    rotate(var(--parallax-rotate, 0deg))
-    scale(1.1);
-}
-
-.geometry-orbit::before,
-.geometry-orbit::after {
-  content: "";
-  position: absolute;
-  inset: 12%;
-  border: 1px solid rgba(198, 255, 61, 0.12);
-  border-radius: 50%;
-}
-
-.geometry-orbit::after {
-  inset: 28%;
-  border-color: rgba(198, 255, 61, 0.22);
-}
-
-.geometry-frame {
-  top: 48vh;
-  left: -8vw;
-  width: min(38vw, 560px);
-  height: min(38vw, 560px);
-  transform:
-    translate3d(0, var(--parallax-y, 0%), 0)
-    rotate(32deg)
-    skewY(-12deg);
-}
-
-.geometry-slab {
-  right: 16vw;
-  bottom: -24vh;
-  width: min(28vw, 420px);
-  height: min(18vw, 260px);
-  transform:
-    translate3d(0, var(--parallax-y, 0%), 0)
-    rotate(-18deg)
-    skewX(-18deg);
+    rotate(var(--parallax-rotate, 0deg));
 }
 
 /* The source itself: anchored where the ring sits, so the brightest part
@@ -497,8 +415,7 @@ a {
 @media (prefers-reduced-motion: reduce) {
   .aura-glow,
   .mesh-gradient,
-  .wireframe,
-  .geometry {
+  .contour-motif {
     animation: none !important;
     --parallax-y: 0%;
     --parallax-rotate: 0deg;
@@ -512,28 +429,8 @@ a {
   }
 
   @media (max-width: 767px) {
-    .wireframe {
-      opacity: 0.1;
-      background-size: 54px 54px;
-    }
-
-    .geometry-orbit {
-      top: 12vh;
-      right: -28vw;
-      width: 72vw;
-      height: 72vw;
-    }
-
-    .geometry-frame {
-      left: -34vw;
-      width: 70vw;
-      height: 70vw;
-    }
-
-    .geometry-slab {
-      right: -18vw;
-      width: 64vw;
-      height: 42vw;
+    .contour-motif {
+      opacity: 0.07;
     }
   }
   .emission-core { transform: translate3d(-2%, 2%, 0) scale(1.06); }
