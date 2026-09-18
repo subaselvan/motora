@@ -249,6 +249,68 @@ a {
   pointer-events: none;
   overflow: hidden;
   background: var(--color-obsidian);
+  isolation: isolate;
+}
+
+.aura-glow,
+.mesh-gradient,
+.wireframe {
+  position: absolute;
+  inset: -16%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* A broad, quiet glow gives the page a light source before the tighter
+   emission field takes over. It is deliberately below the text contrast
+   budget and never competes with the hero. */
+.aura-glow {
+  background:
+    radial-gradient(
+      ellipse at 72% 18%,
+      rgba(198, 255, 61, 0.085),
+      rgba(198, 255, 61, 0.025) 25%,
+      transparent 55%
+    );
+  filter: blur(22px);
+  opacity: 0.85;
+}
+
+/* Low-contrast mesh adds depth without becoming a green wash. */
+.mesh-gradient {
+  background:
+    radial-gradient(ellipse at 20% 70%, rgba(198, 255, 61, 0.028), transparent 45%),
+    linear-gradient(122deg, transparent 26%, rgba(198, 255, 61, 0.018) 48%, transparent 70%),
+    linear-gradient(28deg, transparent 30%, rgba(255, 255, 255, 0.012) 50%, transparent 72%);
+  opacity: 0.8;
+  mix-blend-mode: screen;
+}
+
+/* Thin geometry keeps the background tactile while the low opacity lets
+   cards, images, and headings remain the visual foreground. */
+.wireframe {
+  inset: -30%;
+  opacity: 0.09;
+  background-image:
+    linear-gradient(rgba(198, 255, 61, 0.22) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(198, 255, 61, 0.22) 1px, transparent 1px);
+  background-size: 84px 84px;
+  mask-image: radial-gradient(ellipse at center, black 0%, transparent 67%);
+  transform: perspective(900px) rotateX(58deg) rotateZ(-13deg) scale(1.2);
+  transform-origin: center;
+}
+
+.wireframe-one {
+  top: 44%;
+  left: -12%;
+}
+
+.wireframe-two {
+  top: -22%;
+  left: 38%;
+  opacity: 0.055;
+  background-size: 116px 116px;
+  transform: perspective(900px) rotateX(58deg) rotateZ(18deg) scale(1.2);
 }
 
 /* The source itself: anchored where the ring sits, so the brightest part
@@ -346,6 +408,13 @@ a {
    resting composition is the designed one rather than a corner case.
    Revealed content must be visible immediately, never stuck at opacity 0. */
 @media (prefers-reduced-motion: reduce) {
+  .aura-glow,
+  .mesh-gradient,
+  .wireframe {
+    animation: none !important;
+    transform: none !important;
+  }
+
   .emission-core,
   .emission-bounce {
     animation: none !important;
