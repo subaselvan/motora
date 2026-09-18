@@ -45,10 +45,14 @@ export function AmbientBackdrop() {
       onUpdate: ({ progress }) => {
         layers.forEach((layer, index) => {
           const depth = Number(layer.dataset.parallaxDepth ?? 1);
-          gsap.set(layer, {
-            yPercent: -progress * depth,
-            rotate: progress * (index % 2 === 0 ? 1.2 : -0.8),
-          });
+          layer.style.setProperty(
+            "--parallax-y",
+            `${-progress * depth * 18}%`
+          );
+          layer.style.setProperty(
+            "--parallax-rotate",
+            `${progress * (index % 2 === 0 ? 2.4 : -1.8)}deg`
+          );
         });
       },
     });
@@ -57,17 +61,17 @@ export function AmbientBackdrop() {
     if (finePointer.matches) {
       const aura = backdrop.querySelector<HTMLElement>("[data-pointer-aura]");
       if (aura) {
-        const xTo = gsap.quickTo(aura, "x", {
+        const xTo = gsap.quickTo(aura, "--pointer-x", {
           duration: 1.4,
           ease: "power3.out",
         });
-        const yTo = gsap.quickTo(aura, "y", {
+        const yTo = gsap.quickTo(aura, "--pointer-y", {
           duration: 1.4,
           ease: "power3.out",
         });
         const onPointerMove = (event: PointerEvent) => {
-          xTo((event.clientX / window.innerWidth - 0.5) * 28);
-          yTo((event.clientY / window.innerHeight - 0.5) * 20);
+          xTo((event.clientX / window.innerWidth - 0.5) * 34);
+          yTo((event.clientY / window.innerHeight - 0.5) * 26);
         };
         window.addEventListener("pointermove", onPointerMove, {
           passive: true,
@@ -92,6 +96,9 @@ export function AmbientBackdrop() {
       <span data-parallax-depth="1.4" data-parallax-layer className="mesh-gradient" />
       <span data-parallax-depth="4" data-parallax-layer className="wireframe wireframe-one" />
       <span data-parallax-depth="2.8" data-parallax-layer className="wireframe wireframe-two" />
+      <span data-parallax-depth="3.6" data-parallax-layer className="geometry geometry-orbit" />
+      <span data-parallax-depth="2.2" data-parallax-layer className="geometry geometry-frame" />
+      <span data-parallax-depth="1.2" data-parallax-layer className="geometry geometry-slab" />
       <span className="emission-core" />
       <span className="emission-bounce" />
       <AmbientField />
