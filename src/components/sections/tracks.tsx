@@ -22,7 +22,7 @@ const TRACKS: {
     id: "ride-drive",
     name: "Ride & Drive",
     blurb:
-      "Bikes, scooters, cars and EVs. MOTORA is the operator of record, so the vehicle is ours to answer for. Always self-drive, licence-gated by class.",
+      "Bikes, scooters, cars and EVs. MOTORA is the operator of record, so the vehicle is ours to answer for. You book the exact vehicle on the card, not a class someone reassigns at the counter.",
     licence:
       "You need a two-wheeler licence for bikes and scooters, and an LMV licence for cars and EVs.",
     href: "/search?track=ride-drive",
@@ -31,7 +31,7 @@ const TRACKS: {
     id: "heavy-farm",
     name: "Heavy & Farm",
     blurb:
-      "Trucks, backhoes and tractors. Drive it yourself or book it with an operator. You choose at checkout, and both rates are priced upfront.",
+      "Trucks, backhoes and tractors. Drive it yourself or book it with an operator. You choose at checkout, both rates are priced upfront, and no machine is substituted on the day without your say-so.",
     licence:
       "Self-drive needs a commercial licence, entered once when you verify. Book with an operator and you need no licence of your own.",
     href: "/search?track=heavy-farm",

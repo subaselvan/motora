@@ -14,6 +14,10 @@ const badgeVariants = cva(
         neutral: "bg-obsidian-lighter text-pearl-dim",
         /** Gated by trust score — reads as unavailable. */
         locked: "bg-obsidian-lighter text-pearl-muted",
+        /** Outlined pills. Border on all four sides: a partial stroke reads
+         *  as a stray rule, not as a pill. */
+        "outline-trust": "border border-lime/45 bg-lime/8 text-lime",
+        "outline-urgent": "border border-orange/45 bg-orange/8 text-orange",
       },
     },
     defaultVariants: { variant: "neutral" },

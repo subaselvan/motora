@@ -46,7 +46,10 @@ function CardShell({
     <article
       className={[
         "group relative flex flex-col overflow-hidden rounded-[var(--radius-md)]",
-        "border border-charcoal-1 bg-obsidian-light",
+        "border border-charcoal-1 bg-[linear-gradient(180deg,#1a1a1f_0%,#0e0e11_100%)]",
+        // Glow bleeding off the top-left corner. A pseudo-element so it paints
+        // behind every positioned child rather than over the info panel.
+        "before:pointer-events-none before:absolute before:-left-14 before:-top-14 before:h-44 before:w-44 before:rounded-full before:bg-[radial-gradient(closest-side,rgba(198,255,61,0.13),transparent)] before:content-['']",
         "transition-[transform,border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-standard)]",
         // Flat at rest; on hover it takes the system's single shadow tier.
         locked
@@ -110,19 +113,25 @@ function RideDriveCard({
 
   return (
     <CardShell locked={locked}>
-      {/* Designed plate, not a photograph — we ship no stock imagery. */}
-      <div className="relative aspect-[4/3] overflow-hidden border-b border-charcoal-1 bg-[radial-gradient(120%_90%_at_20%_0%,#20202a_0%,#0f0f13_60%,#0b0b0d_100%)]">
+      {/* Photo slot. Shaped and scrimmed for the real vehicle photography:
+          drop next/image in with object-cover and the badges, scrim and
+          frame all stay exactly where they are. */}
+      <div className="relative aspect-[4/3] overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_90%_at_20%_0%,#23232c_0%,#141419_58%,#0c0c0f_100%)]">
         <div
           aria-hidden="true"
-          className="absolute inset-0 opacity-[0.18] [background-image:linear-gradient(to_right,#54545a_1px,transparent_1px),linear-gradient(to_bottom,#54545a_1px,transparent_1px)] [background-size:28px_28px]"
+          className="absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,#54545a_1px,transparent_1px),linear-gradient(to_bottom,#54545a_1px,transparent_1px)] [background-size:28px_28px]"
         />
-        <span
+        <div
           aria-hidden="true"
-          className="absolute -bottom-3 left-3 select-none font-heading text-[5.5rem] font-extrabold leading-none tracking-tighter text-pearl/[0.06]"
-        >
-          {specs.engineCc ? `${specs.engineCc}` : `${specs.rangeKm}`}
-        </span>
+          className="absolute inset-0 bg-[linear-gradient(115deg,transparent_40%,rgba(198,255,61,0.08)_52%,transparent_64%)]"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-2/5 bg-[linear-gradient(to_top,rgba(6,6,9,0.85),transparent)]"
+        />
+
         <div className="absolute left-3 top-3 flex gap-1.5">
+          <Badge variant="outline-trust">Lifestyle</Badge>
           {vehicle.verified && (
             <Badge variant="trust">
               <ShieldCheck size={12} aria-hidden="true" />
@@ -135,7 +144,10 @@ function RideDriveCard({
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      {/* Translucent, not backdrop-blurred: these cards live inside horizontal
+          scrollers, where blur costs a repaint per frame and has nothing behind
+          it to blur anyway. */}
+      <div className="relative flex flex-1 flex-col gap-3 bg-[rgba(18,18,21,0.82)] p-4">
         <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
           <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
           {vehicle.model}
@@ -213,7 +225,7 @@ function HeavyFarmCard({
     <CardShell locked={locked}>
       {/* Specs occupy the position the photo holds on a consumer card. */}
       <div
-        className="grid border-b border-charcoal-1 bg-obsidian"
+        className="relative grid border-b border-white/10 bg-obsidian/70"
         style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
       >
         {stats.map((stat) => (
@@ -231,13 +243,14 @@ function HeavyFarmCard({
         ))}
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="relative flex flex-1 flex-col gap-3 bg-[rgba(18,18,21,0.82)] p-4">
         <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
           <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
           {vehicle.model}
         </h3>
 
         <div className="flex flex-wrap gap-1.5">
+          <Badge variant="outline-urgent">Heavy equipment</Badge>
           <Badge variant="urgent">Self-drive or operator</Badge>
           {/* Licence class stated on the card itself, not just at the
               booking gate (United Rentals CDL pattern). */}

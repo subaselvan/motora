@@ -13,7 +13,11 @@ import {
  * Rows render in their final state, so the surface is complete before the
  * one authored animation runs over it.
  */
-export function TrustLedger({ activeCategory }: { activeCategory: Category | null }) {
+export function TrustLedger({
+  activeCategory = null,
+}: {
+  activeCategory?: Category | null;
+}) {
   const [score, setScore] = useState(DEMO_TRUST_SCORE);
   const ref = useRef<HTMLDivElement>(null);
   const played = useRef(false);
@@ -52,7 +56,7 @@ export function TrustLedger({ activeCategory }: { activeCategory: Category | nul
   return (
     <div
       ref={ref}
-      /* The hero's focal panel, on the single shadow tier. */
+      /* The trust section's focal panel, on the single shadow tier. */
       className="overflow-hidden rounded-[var(--radius-md)] border border-charcoal-2 bg-obsidian-light shadow-[var(--elev)]"
     >
       <div className="flex items-baseline justify-between gap-4 border-b border-charcoal-1 px-5 py-4">
