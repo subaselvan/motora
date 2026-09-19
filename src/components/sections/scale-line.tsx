@@ -32,7 +32,10 @@ export function ScaleLine() {
       aria-label="MOTORA at a glance"
       className="border-y border-charcoal-1/70"
     >
-      <div className="mx-auto max-w-4xl px-4 py-14 md:px-6 md:py-20">
+      <div
+        className="mx-auto max-w-4xl px-4 md:px-6"
+        style={{ paddingBlock: "var(--section-y)" }}
+      >
         <p
           data-reveal
           className="text-balance text-center font-heading leading-[1.45] tracking-[-0.01em] text-pearl-dim"

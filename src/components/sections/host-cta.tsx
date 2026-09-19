@@ -11,7 +11,7 @@ const EARNINGS = [
 export function HostCta() {
   return (
     <section aria-labelledby="host-cta-heading" className="border-t border-charcoal-1">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
         <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-12">
           <div className="lg:col-span-6">
             <h2

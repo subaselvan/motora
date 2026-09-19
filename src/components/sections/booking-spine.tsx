@@ -46,7 +46,7 @@ export function BookingSpine() {
       aria-labelledby="spine-heading"
       className="border-t border-charcoal-1 bg-obsidian-light"
     >
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24">
+      <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
         <div className="max-w-[55ch]">
           <h2
             id="spine-heading"

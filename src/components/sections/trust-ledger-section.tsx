@@ -28,7 +28,7 @@ export function TrustLedgerSection() {
         className="pointer-events-none absolute inset-x-0 top-0 h-[28rem] bg-[radial-gradient(60%_70%_at_72%_10%,rgba(198,255,61,0.07)_0%,transparent_70%)]"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24">
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
         <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-6">
             <p className="font-body text-xs font-medium uppercase tracking-[0.18em] text-orange">

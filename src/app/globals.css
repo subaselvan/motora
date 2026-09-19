@@ -80,6 +80,15 @@
   --text-h2: clamp(1.6rem, 1.2rem + 1.7vw, 2.35rem);
   --text-figure: clamp(2.4rem, 1.7rem + 3vw, 3.9rem);
 
+  /* ONE section rhythm, used at every seam. Previously each section set its
+     own py-16 md:py-24, which stepped 64 -> 96px at a single breakpoint and
+     disagreed with the scale line's 56/80. Measured across the premium dark
+     reference set (Lithic, Lotus, Blockstream), the seam between sections
+     runs 80-160px with the biggest step around 96px; under ~64px two
+     sections start reading as one block. Fluid rather than stepped, so the
+     rhythm keeps widening on large screens instead of capping at 96px. */
+  --section-y: clamp(4.5rem, 7.5vw, 8.5rem);
+
   /* Elevation — ONE shared shadow tier (decided 2026-09-14, following the
      Airbnb pattern in docs/research/DESIGN_INSPIRATION_SCAN.md; supersedes
      the five-level ladder from the same day). Cards, focal panels and the
