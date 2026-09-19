@@ -44,7 +44,7 @@ export function Hero() {
           just dim the design for nothing. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-[5] hidden bg-[linear-gradient(to_right,rgba(6,6,9,0.78)_0%,rgba(6,6,9,0.5)_42%,transparent_68%)] md:block"
+        className="pointer-events-none absolute inset-0 -z-[5] hidden bg-[linear-gradient(to_right,rgba(6,6,9,0.8)_0%,rgba(6,6,9,0.62)_42%,transparent_72%)] md:block"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 pt-14 md:px-6 md:pt-20">

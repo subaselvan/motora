@@ -251,12 +251,106 @@ a {
   background: var(--color-obsidian);
 }
 
-/* The source itself: anchored where the ring sits, so the brightest part
-   of the page is the thing the page is actually about. */
+/* Every parallax layer is oversized so its scroll travel (set in
+   ambient-backdrop.tsx) never drags an edge into view. */
+.bg-layer {
+  position: absolute;
+  inset: -14% -8%;
+  will-change: transform;
+}
+
+/* ── Mesh: the deepest layer ──────────────────────────────────────────
+   Three broad, low-alpha fields. This is what keeps the far side of the
+   frame from being a flat fill without giving it enough colour to compete
+   with the light source. Coprime durations, so the three never return to
+   the same arrangement inside a session. */
+.bg-mesh > span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.bg-mesh-a {
+  top: -6%;
+  left: -14%;
+  width: 70vmax;
+  height: 70vmax;
+  background: radial-gradient(
+    closest-side,
+    rgba(198, 255, 61, 0.07),
+    rgba(198, 255, 61, 0.022) 48%,
+    transparent 72%
+  );
+  animation: mesh-a 41s var(--ease-base) infinite alternate;
+}
+
+.bg-mesh-b {
+  bottom: -16%;
+  right: -12%;
+  width: 64vmax;
+  height: 64vmax;
+  background: radial-gradient(
+    closest-side,
+    rgba(255, 122, 26, 0.05),
+    rgba(255, 122, 26, 0.014) 50%,
+    transparent 72%
+  );
+  animation: mesh-b 53s var(--ease-base) infinite alternate;
+}
+
+.bg-mesh-c {
+  top: 36%;
+  left: 28%;
+  width: 52vmax;
+  height: 52vmax;
+  background: radial-gradient(
+    closest-side,
+    rgba(198, 255, 61, 0.045),
+    transparent 70%
+  );
+  animation: mesh-c 37s var(--ease-base) infinite alternate;
+}
+
+@keyframes mesh-a {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(6%, 5%, 0) scale(1.12); }
+  100% { transform: translate3d(-3%, -4%, 0) scale(1.03); }
+}
+@keyframes mesh-b {
+  0% { transform: translate3d(0, 0, 0) scale(1.05); }
+  45% { transform: translate3d(-8%, -6%, 0) scale(1.18); }
+  100% { transform: translate3d(4%, 5%, 0) scale(0.98); }
+}
+@keyframes mesh-c {
+  0% { transform: translate3d(0, 0, 0) scale(1.08); }
+  55% { transform: translate3d(9%, -7%, 0) scale(0.96); }
+  100% { transform: translate3d(-6%, 4%, 0) scale(1.12); }
+}
+
+/* ── Wireframe: the nearest layer ─────────────────────────────────────
+   A schematic grid in lime — fine 24px lines, a heavier rule at each tile
+   edge, crosshair ticks at the tile centre — echoing the "verified,
+   documented, engineered" narrative the booking spine is built on. Muted
+   to the point of being felt rather than read: the tile's own opacities
+   are scaled again by the layer, and a radial mask dissolves it toward the
+   edges and the copy column. It paints once; parallax moves it on the
+   compositor. */
+.bg-wire {
+  opacity: 0.34;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg stroke='%23C6FF3D' fill='none'%3E%3Cpath d='M0 24H240M0 48H240M0 72H240M0 96H240M0 144H240M0 168H240M0 192H240M0 216H240M24 0V240M48 0V240M72 0V240M96 0V240M144 0V240M168 0V240M192 0V240M216 0V240' stroke-width='0.5' stroke-opacity='0.16'/%3E%3Cpath d='M0 120H240M120 0V240' stroke-width='0.75' stroke-opacity='0.34'/%3E%3Cpath d='M0 0.5H240M0.5 0V240' stroke-width='1' stroke-opacity='0.5'/%3E%3Cpath d='M112 120H128M120 112V128' stroke-width='1' stroke-opacity='0.7'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='1.5' fill='%23C6FF3D' fill-opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  mask-image: radial-gradient(120% 95% at 68% 32%, #000 28%, transparent 82%);
+  -webkit-mask-image: radial-gradient(120% 95% at 68% 32%, #000 28%, transparent 82%);
+}
+
+/* ── Aura: the source itself ──────────────────────────────────────────
+   Anchored where the ring sits, so the brightest part of the page is the
+   thing the page is actually about. */
 .emission-core {
   position: absolute;
-  top: -22vh;
-  right: -8vw;
+  top: -8vh;
+  right: 0;
   width: 40vmax;
   height: 40vmax;
   border-radius: 50%;
@@ -347,9 +441,15 @@ a {
    Revealed content must be visible immediately, never stuck at opacity 0. */
 @media (prefers-reduced-motion: reduce) {
   .emission-core,
-  .emission-bounce {
+  .emission-bounce,
+  .bg-mesh > span {
     animation: none !important;
   }
+  /* Parallax is skipped entirely in ambient-backdrop.tsx under this query;
+     the layers simply hold their rest composition. */
+  .bg-mesh-a { transform: translate3d(3%, 2%, 0) scale(1.06); }
+  .bg-mesh-b { transform: translate3d(-4%, -3%, 0) scale(1.1); }
+  .bg-mesh-c { transform: translate3d(4%, -3%, 0) scale(1.02); }
   .emission-core { transform: translate3d(-2%, 2%, 0) scale(1.06); }
   .emission-bounce { transform: translate3d(3%, -2%, 0) scale(1.1); }
 

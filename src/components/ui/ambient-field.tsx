@@ -1,25 +1,29 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import { Renderer, Program, Mesh, Triangle } from "ogl";
 
 /**
- * Volumetric emission field. One light source, placed behind the hero's
- * trust ring, scattering through haze and falling off into obsidian.
+ * Procedural neon texture with one light source.
  *
- * The rule this implements, from docs/research: the accent is a light
- * source, not a highlight colour. So the shader models a source and its
- * falloff rather than painting green shapes — that distinction is the
- * whole difference between this reading as premium or as the stock
- * acid-green-on-black treatment the research flags as a generated tell.
+ * Two things in one pass. The texture is domain-warped fractal noise — the
+ * same mechanism as the earlier liquid-chrome ribbons, but tinted lime and
+ * held well under the light so it reads as haze catching the glow, not as
+ * paint. The source is the emission behind the hero ring, with steep
+ * falloff so the frame stays obsidian away from it.
  *
- * Full-viewport fill rate is the entire cost, so:
- *  - it never mounts on a phone, a low-memory device, or under
- *    prefers-reduced-motion. Those keep the CSS field underneath, which
- *    is a finished design rather than a degraded one.
- *  - DPR is capped at 1.5. A fullscreen fragment shader at DPR 3 is the
- *    single most common way this pattern tanks LCP on mid-range Android.
- *  - the loop stops when the tab is hidden.
+ * The ribbons are lit BY the source: they brighten near it and fade with
+ * it. That coupling is what stops this being two effects layered on top of
+ * each other, and it is also what keeps the accent honest as a light
+ * rather than a decorative wash, which the research names as the most
+ * common "generated" tell on dark sites.
+ *
+ * Scroll progress arrives from the backdrop's ScrollTrigger through a ref,
+ * so the GPU layer and the DOM parallax layers move as one scene.
+ *
+ * Full-viewport fill rate is the entire cost, so it never mounts on a
+ * phone, a low-memory device, or under prefers-reduced-motion; DPR is
+ * capped at 1.5; and the loop stops when the tab is hidden.
  */
 
 const VERTEX = `
@@ -39,7 +43,8 @@ uniform vec2 uSource;
 uniform vec3 uLight;
 uniform vec3 uBounce;
 uniform float uExposure;
-uniform float uScroll;
+uniform float uTexture;
+uniform float uProgress;
 varying vec2 vUv;
 
 vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
@@ -69,8 +74,6 @@ float snoise(vec2 v){
   return 130.0 * dot(m, g);
 }
 
-// Three octaves is enough to read as haze; a fourth costs fill rate the
-// mid-range Android budget does not have.
 float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
@@ -86,82 +89,92 @@ void main() {
   vec2 aspect = vec2(uResolution.x / uResolution.y, 1.0);
   vec2 p = (vUv - 0.5) * aspect;
 
+  // ── Light source ──────────────────────────────────────────────────
   // Scroll walks the source upward and dims it, so descending the page
   // reads as moving away from the light rather than as sections changing
   // their own background.
-  vec2 srcUv = uSource + vec2(0.0, uScroll * 0.42);
+  vec2 srcUv = uSource + vec2(0.0, uProgress * 0.42);
   vec2 src = (srcUv - 0.5) * aspect;
-
   float d = length(p - src);
 
-  // Steep falloff on purpose. An earlier, gentler curve lifted the whole
-  // frame to roughly rgb(24,24,16) at its darkest corner — measured — so
-  // nothing on the page was ever actually obsidian and the result read as
-  // green wash rather than as light. The reference systems run ~85% true
-  // near-black with accent confined to a small share of the frame, and
-  // that ratio is the thing being protected here.
+  // Steep on purpose: a gentler curve measured rgb(24,24,16) at the
+  // frame's darkest corner, so nothing was ever actually obsidian.
   float fall = 1.0 / (1.0 + 34.0 * d * d);
 
   float t = uTime * 0.05;
   float haze = fbm(p * 1.7 + vec2(t, -t * 0.66));
-
-  // Scatter is modulated light, so the noise can only ever brighten where
-  // light already reaches. That is what keeps it reading as air rather
-  // than as a texture laid on top.
   float scatter = fall * (0.72 + 0.46 * haze);
 
-  // Tight directional lobe. Real sources are not perfectly isotropic, but
-  // this has to die well inside the frame or it becomes ambient lift.
   float lobe = pow(max(0.0, 1.0 - d * 1.7), 3.0);
   scatter += lobe * 0.16 * (0.6 + 0.4 * haze);
 
-  // Second-order bounce filling the opposite corner. Dim on purpose: it
-  // exists so the frame is not lit from exactly one place.
   vec2 bouncePos = (vec2(0.06, 0.08) - 0.5) * aspect;
   float bd = length(p - bouncePos);
   float bounce = 1.0 / (1.0 + 34.0 * bd * bd);
 
+  // ── Neon texture ──────────────────────────────────────────────────
+  // Each octave is displaced by the one before it: flowing ribbons, not
+  // static cloud. The field slides with scroll (its own parallax rate)
+  // and drifts slowly on its own.
+  vec2 rp = p * 1.15 + vec2(0.0, uProgress * 0.9);
+  float rt = uTime * 0.09;
+  float n1 = snoise(rp * 1.4 + rt);
+  float n2 = snoise(rp * 2.3 - rt * 0.8 + n1 * 0.9);
+  float n3 = snoise(rp * 0.8 + n2 * 0.85);
+  float ribbon = pow(smoothstep(0.22, 0.95, n3), 1.6);
+
+  // Ribbons are haze the light passes through, so they are brightest
+  // near the source and never brighter than it. Away from the source
+  // they keep a low floor, which is what gives the far side of the frame
+  // texture without giving it colour.
+  float lit = 0.3 + 0.7 * clamp(fall * 3.2, 0.0, 1.0);
+  float ribbonLit = ribbon * lit;
+
+  // ── Composite ─────────────────────────────────────────────────────
   vec3 ground = vec3(0.043, 0.043, 0.051);
   vec3 color = ground;
+
+  // Shadow side of the ribbons: a whisper of cool dark green so the
+  // texture reads in the unlit regions as tone, not just as lime.
+  color += vec3(0.018, 0.044, 0.02) * ribbon * 0.6;
+  color += uLight * ribbonLit * uTexture;
+
   color += uLight * scatter * uExposure;
   color += uBounce * bounce * uExposure * 0.13;
 
-  // Specular bloom only in the very core, where a real source would clip.
   color += vec3(1.0) * pow(max(0.0, fall - 0.72), 2.0) * 0.32;
 
   gl_FragColor = vec4(color, 1.0);
 }`;
 
 export type AmbientFieldProps = {
-  /** Light position in 0-1 viewport space. Defaults behind the hero ring. */
+  /** 0-1 scroll progress across the document, shared with the DOM layers. */
+  progressRef?: RefObject<number>;
+  /** Light position in 0-1 GL space (origin bottom-left). Behind the ring. */
   source?: [number, number];
-  /** 0-1 RGB. Defaults to MOTORA lime #C6FF3D. */
   light?: [number, number, number];
-  /** 0-1 RGB. Defaults to MOTORA orange #FF7A1A. */
   bounce?: [number, number, number];
-  /** Global brightness multiplier; the contrast lever. */
+  /** Brightness of the light source; the contrast lever for copy. */
   exposure?: number;
+  /** Brightness of the ribbon texture; the "how alive is the frame" lever. */
+  texture?: number;
   className?: string;
 };
 
 export function AmbientField({
-  // GL's UV origin is bottom-left, so y here counts up from the bottom of
-  // the viewport: 0.74 places the source behind the hero ring at upper
-  // right. Reading this as a CSS top-left coordinate is how it originally
-  // ended up lighting the wrong corner.
+  progressRef,
   source = [0.76, 0.74],
   light = [0.776, 1.0, 0.239],
   bounce = [1.0, 0.478, 0.102],
   exposure = 0.46,
+  texture = 0.17,
   className = "",
 }: AmbientFieldProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const opts = useRef({ source, light, bounce, exposure });
-  // Synced in an effect, not during render: the GL loop reads these every
-  // frame, but writing a ref mid-render is a correctness trap.
+  const opts = useRef({ source, light, bounce, exposure, texture });
   useEffect(() => {
-    opts.current = { source, light, bounce, exposure };
+    opts.current = { source, light, bounce, exposure, texture };
   });
 
   useEffect(() => {
@@ -172,8 +185,6 @@ export function AmbientField({
     const deviceMemory = (navigator as Navigator & { deviceMemory?: number })
       .deviceMemory;
 
-    // Capability gate. Anything failing here keeps the CSS field, which is
-    // already a finished background rather than a placeholder.
     const capable =
       !reduced.matches &&
       window.innerWidth >= 768 &&
@@ -188,7 +199,7 @@ export function AmbientField({
         dpr: Math.min(window.devicePixelRatio || 1, 1.5),
       });
     } catch {
-      return; // No WebGL: the CSS field underneath stands in.
+      return;
     }
 
     const gl = renderer.gl;
@@ -200,7 +211,6 @@ export function AmbientField({
     container.appendChild(canvas);
 
     const o = opts.current;
-    const geometry = new Triangle(gl);
     const program = new Program(gl, {
       vertex: VERTEX,
       fragment: FRAGMENT,
@@ -211,10 +221,11 @@ export function AmbientField({
         uLight: { value: o.light },
         uBounce: { value: o.bounce },
         uExposure: { value: o.exposure },
-        uScroll: { value: 0 },
+        uTexture: { value: o.texture },
+        uProgress: { value: 0 },
       },
     });
-    const mesh = new Mesh(gl, { geometry, program });
+    const mesh = new Mesh(gl, { geometry: new Triangle(gl), program });
 
     const resize = () => {
       const w = container.clientWidth;
@@ -226,21 +237,14 @@ export function AmbientField({
     resize();
     window.addEventListener("resize", resize);
 
-    let scroll = 0;
-    const onScroll = () => {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      scroll = max > 0 ? Math.min(window.scrollY / max, 1) : 0;
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-
     let raf = 0;
     let running = false;
 
     const draw = (now: number) => {
       program.uniforms.uTime.value = now * 0.001;
-      program.uniforms.uScroll.value = scroll;
+      program.uniforms.uProgress.value = progressRef?.current ?? 0;
       program.uniforms.uExposure.value = opts.current.exposure;
+      program.uniforms.uTexture.value = opts.current.texture;
       renderer.render({ scene: mesh });
       if (running) raf = requestAnimationFrame(draw);
     };
@@ -260,11 +264,10 @@ export function AmbientField({
       run(false);
       document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", resize);
-      window.removeEventListener("scroll", onScroll);
       canvas.remove();
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, []);
+  }, [progressRef]);
 
   return (
     <div
