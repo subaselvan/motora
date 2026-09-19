@@ -49,12 +49,22 @@ function CardShell({
         "border border-charcoal-1 bg-[linear-gradient(180deg,#1a1a1f_0%,#0e0e11_100%)]",
         // Glow bleeding off the top-left corner. A pseudo-element so it paints
         // behind every positioned child rather than over the info panel.
-        "before:pointer-events-none before:absolute before:-left-14 before:-top-14 before:h-44 before:w-44 before:rounded-full before:bg-[radial-gradient(closest-side,rgba(198,255,61,0.13),transparent)] before:content-['']",
-        "transition-[transform,border-color,box-shadow] duration-[var(--duration-base)] ease-[var(--ease-standard)]",
-        // Flat at rest; on hover it takes the system's single shadow tier.
+        "before:pointer-events-none before:absolute before:-left-14 before:-top-14 before:h-44 before:w-44 before:rounded-full before:bg-[radial-gradient(closest-side,rgba(198,255,61,0.13),transparent)] before:transition-opacity before:duration-[var(--duration-moderate)] before:content-['']",
+        // A hairline that only lights on hover. Drawn as an inset ring on a
+        // pseudo-element rather than the border, so the card's geometry never
+        // shifts by a pixel between states.
+        "after:pointer-events-none after:absolute after:inset-0 after:rounded-[var(--radius-md)] after:opacity-0 after:shadow-[inset_0_0_0_1px_rgba(198,255,61,0.45)] after:transition-opacity after:duration-[var(--duration-moderate)] after:ease-[var(--ease-base)] after:content-['']",
+        "transition-[transform,border-color,box-shadow] duration-[var(--duration-moderate)] ease-[var(--ease-base)]",
         locked
           ? "opacity-60"
-          : "hover:-translate-y-0.5 hover:border-charcoal-3 hover:shadow-[var(--elev)]",
+          : [
+              // Rises further than before and carries a lime-tinted cast, so
+              // the hover reads as the card catching the page's light rather
+              // than as a generic drop shadow.
+              "hover:-translate-y-1 hover:border-charcoal-3",
+              "hover:shadow-[0_1px_2px_rgba(4,4,8,0.55),0_18px_40px_-18px_rgba(4,4,8,0.8),0_0_36px_-12px_rgba(198,255,61,0.25)]",
+              "hover:after:opacity-100 hover:before:opacity-[1.6]",
+            ].join(" "),
       ].join(" ")}
     >
       {children}
@@ -73,13 +83,18 @@ function BookCta({
   className?: string;
 }) {
   if (locked) {
+    // Orange, not grey: this is the same colour the hero ring marks the next
+    // tier with. A gate you are working toward should read as a target, not
+    // as a dead control — CRED's walled-garden framing, where the thing you
+    // have not earned is the most aspirational object on the surface.
     return (
       <span
         className={[
-          "inline-flex h-8 items-center justify-center rounded-[var(--radius-sm)] border border-charcoal-2 px-3 text-xs font-medium text-pearl-muted",
+          "inline-flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-orange/40 bg-orange/[0.08] px-3 text-xs font-medium text-orange",
           className ?? "",
         ].join(" ")}
       >
+        <Lock size={11} aria-hidden="true" />
         Locked
       </span>
     );
@@ -170,9 +185,14 @@ function RideDriveCard({
 
         <div className="mt-auto flex items-end justify-between gap-3 pt-1">
           <div>
-            <p data-figure className="font-heading text-xl font-bold text-lime">
+            {/* The price is the card's loudest note. Rich direction: let it
+                actually be loud rather than matching the title's weight. */}
+            <p
+              data-figure
+              className="font-heading text-2xl font-bold leading-none tracking-[-0.02em] text-lime"
+            >
               {formatINR(vehicle.perDay)}
-              <span className="ml-1 font-body text-xs font-medium text-pearl-muted">
+              <span className="ml-1 font-body text-xs font-medium tracking-normal text-pearl-muted">
                 /day
               </span>
             </p>

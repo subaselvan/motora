@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
@@ -14,10 +14,25 @@ const primaryLinks = [
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // The bar condenses and takes a solid ground once the page moves. At rest
+  // over the hero it stays tall and near-transparent so the light behind it
+  // is unbroken; in motion it becomes a surface, because translucent chrome
+  // over scrolling content is where dark sites start to look cheap.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-charcoal-1 bg-obsidian/90 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 md:px-6">
+    <header
+      data-scrolled={scrolled || undefined}
+      className="sticky top-0 z-50 border-b border-charcoal-1/60 bg-obsidian/70 backdrop-blur-md transition-[background-color,border-color,box-shadow] duration-[var(--duration-moderate)] ease-[var(--ease-base)] data-[scrolled]:border-charcoal-1 data-[scrolled]:bg-obsidian/95 data-[scrolled]:shadow-[0_1px_0_0_rgba(198,255,61,0.07),0_10px_30px_-18px_rgba(0,0,0,0.9)]"
+    >
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 transition-[height] duration-[var(--duration-moderate)] ease-[var(--ease-base)] md:px-6 [[data-scrolled]_&]:h-14">
         <Link
           href="/"
           className="flex items-center gap-2.5 rounded-[var(--radius-sm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime focus-visible:ring-offset-2 focus-visible:ring-offset-obsidian"
@@ -41,7 +56,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-[var(--radius-sm)] text-sm text-pearl-dim transition-colors duration-[var(--duration-fast)] hover:text-pearl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime"
+              className="nav-link rounded-[var(--radius-sm)] text-sm text-pearl-dim transition-colors duration-[var(--duration-short)] hover:text-pearl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime"
             >
               {link.label}
             </Link>

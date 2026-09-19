@@ -1,3 +1,4 @@
+import { SectionIntro } from "@/components/ui/section-intro";
 import { TrustLedger } from "@/components/trust-ledger";
 
 /** How the score moves. Directions, not final point values: the amounts are
@@ -29,24 +30,17 @@ export function TrustLedgerSection() {
       />
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
-        <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-6">
-            <p className="font-body text-xs font-medium uppercase tracking-[0.18em] text-orange">
-              Trust protocol
-            </p>
-            <h2
-              id="trust-heading"
-              className="mt-4 font-heading text-3xl font-bold tracking-[-0.02em] text-pearl md:text-4xl"
-            >
-              Categories unlock as your record grows.
-            </h2>
-            <p className="mt-4 max-w-[52ch] text-lg leading-relaxed text-pearl-dim">
-              Every platform makes you start from zero. Here the record is the
-              account: a scooter rental in Coimbatore is what qualifies you for
-              a backhoe in Chennai two seasons later.
-            </p>
+        <SectionIntro
+          index="02"
+          kicker="Trust protocol"
+          headingId="trust-heading"
+          heading="Categories unlock as your record grows."
+          lede="Every platform makes you start from zero. Here the record is the account: a scooter rental in Coimbatore is what qualifies you for a backhoe in Chennai two seasons later."
+        />
 
-            <dl className="mt-8 space-y-4 border-t border-charcoal-1 pt-6">
+        <div className="mt-16 grid gap-10 lg:grid-cols-12 lg:gap-12 md:mt-20">
+          <div className="lg:col-span-6">
+            <dl className="space-y-4 border-t border-charcoal-1 pt-6">
               {MOVEMENTS.map((movement) => (
                 <div key={movement.text} className="flex gap-3">
                   <dt

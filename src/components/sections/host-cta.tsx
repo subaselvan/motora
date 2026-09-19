@@ -1,11 +1,15 @@
+import { SectionIntro } from "@/components/ui/section-intro";
 import Link from "next/link";
+import { CountUp } from "@/components/ui/count-up";
 import { Button } from "@/components/ui/button";
 
-const EARNINGS = [
-  ["Scooter", "₹6,400"],
-  ["Hatchback", "₹21,800"],
-  ["Tractor", "₹38,500"],
-  ["Backhoe", "₹1,64,000"],
+/** Numeric so the figures can count up; formatted through the same INR
+ *  helper the prices use, which keeps the lakh grouping consistent. */
+const EARNINGS: [string, number][] = [
+  ["Scooter", 6400],
+  ["Hatchback", 21800],
+  ["Tractor", 38500],
+  ["Backhoe", 164000],
 ];
 
 export function HostCta() {
@@ -14,17 +18,13 @@ export function HostCta() {
       <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
         <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-12">
           <div className="lg:col-span-6">
-            <h2
-              id="host-cta-heading"
-              className="font-heading text-3xl font-bold tracking-[-0.02em] text-pearl md:text-4xl"
-            >
-              Your vehicle is idle most of the week
-            </h2>
-            <p className="mt-4 max-w-[58ch] text-lg leading-relaxed text-pearl-dim">
-              List it and it earns while you are not using it. You set the
-              price, the availability, and who gets approved. Every renter
-              arrives with a trust record you can read before you accept.
-            </p>
+            <SectionIntro
+              index="04"
+              kicker="For owners"
+              headingId="host-cta-heading"
+              heading="Your vehicle is idle most of the week"
+              lede="List it and it earns while you are not using it. You set the price, the availability, and who gets approved. Every renter arrives with a trust record you can read before you accept."
+            />
             <div className="mt-7 flex flex-wrap gap-3">
               <Button variant="primary" size="lg" asChild>
                 <Link href="/host-landing">List your vehicle</Link>
@@ -47,11 +47,11 @@ export function HostCta() {
                     className="flex items-baseline justify-between px-5 py-3.5"
                   >
                     <dt className="text-sm text-pearl-dim">{vehicle}</dt>
-                    <dd
-                      data-figure
-                      className="font-heading text-lg font-bold tabular-nums text-lime"
-                    >
-                      {amount}
+                    <dd>
+                      <CountUp
+                        value={amount}
+                        className="font-heading text-lg font-bold tabular-nums text-lime"
+                      />
                     </dd>
                   </div>
                 ))}

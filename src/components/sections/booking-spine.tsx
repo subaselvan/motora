@@ -1,3 +1,4 @@
+import { SectionIntro } from "@/components/ui/section-intro";
 /** The order is load-bearing: each step exists because the one before it
  *  established something. Rows name the failure they prevent, drawn from the
  *  cross-platform complaint patterns in RESEARCH_BRIEF.md. */
@@ -48,16 +49,13 @@ export function BookingSpine() {
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
         <div className="max-w-[55ch]">
-          <h2
-            id="spine-heading"
-            className="font-heading text-3xl font-bold tracking-[-0.02em] text-pearl md:text-4xl"
-          >
-            The spine of every rental
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-pearl-dim">
-            Same six steps whether it is a ₹399 scooter or a ₹18,900 excavator.
-            Each one is here because the industry keeps getting it wrong.
-          </p>
+          <SectionIntro
+            index="03"
+            kicker="The spine"
+            headingId="spine-heading"
+            heading="The spine of every rental"
+            lede="Same six steps whether it is a ₹399 scooter or a ₹18,900 excavator. Each one is here because the industry keeps getting it wrong."
+          />
         </div>
 
         <ol className="mt-12 border-t border-charcoal-1">

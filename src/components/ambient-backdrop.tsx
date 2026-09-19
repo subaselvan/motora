@@ -40,7 +40,6 @@ export function AmbientBackdrop() {
       const q = gsap.utils.selector(root);
       const mesh = q(".bg-mesh");
       const contour = q(".bg-contour");
-      const wire = q(".bg-wire");
       const aura = q(".bg-aura");
 
       gsap.timeline({
@@ -63,7 +62,6 @@ export function AmbientBackdrop() {
         // own oversized box.
         .to(mesh, { yPercent: -4, force3D: true }, 0)
         .to(contour, { yPercent: -8, rotation: -1, force3D: true }, 0)
-        .to(wire, { yPercent: -11, rotation: 1.5, force3D: true }, 0)
         // The aura tracks the hero up and off the page: light should leave
         // with the thing that was emitting it.
         .to(aura, { yPercent: -70, opacity: 0.15, force3D: true }, 0);
@@ -112,7 +110,6 @@ export function AmbientBackdrop() {
       </div>
 
       <div className="bg-layer bg-contour" />
-      <div className="bg-layer bg-wire" />
 
       <div className="bg-layer bg-aura">
         <div className="bg-aura-pointer">

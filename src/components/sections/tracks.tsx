@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { VehicleCard } from "@/components/vehicle-card";
+import { SectionIntro } from "@/components/ui/section-intro";
 import {
   DEMO_TRUST_SCORE,
   RAILS,
@@ -48,20 +49,15 @@ export function Tracks() {
       className="overflow-x-clip border-t border-charcoal-1"
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
-        <div className="max-w-[55ch]">
-          <h2
-            id="tracks-heading"
-            className="font-heading text-3xl font-bold tracking-[-0.02em] text-pearl md:text-4xl"
-          >
-            Two tracks, one account
-          </h2>
-          <p className="mt-4 text-lg leading-relaxed text-pearl-dim">
-            A commuter and a contractor need different things from a rental.
-            They should not need different companies.
-          </p>
-        </div>
+        <SectionIntro
+          index="01"
+          kicker="The split"
+          headingId="tracks-heading"
+          heading="Two tracks, one account"
+          lede="A commuter and a contractor need different things from a rental. They should not need different companies."
+        />
 
-        <div className="mt-14 space-y-20">
+        <div className="mt-16 space-y-20 md:mt-20">
           {TRACKS.map((track) => (
             <div key={track.id}>
               <div className="flex flex-col gap-4 border-b border-charcoal-1 pb-6 md:flex-row md:items-end md:justify-between">
@@ -153,11 +149,13 @@ function Rail({
           itself for scroll-padding, which snapped the rail 8px off. */}
       <ul
         aria-labelledby={headingId}
+        data-reveal-group
         className="mt-4 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-3 [margin-inline:calc(50cqi_-_50vw)] [padding-inline:calc(50vw_-_50cqi)] [scroll-padding-inline:calc(50vw_-_50cqi)]"
       >
         {vehicles.map((vehicle) => (
           <li
             key={vehicle.id}
+            data-reveal-item
             className="w-[17.5rem] shrink-0 snap-start sm:w-[19rem]"
           >
             <VehicleCard vehicle={vehicle} trustScore={DEMO_TRUST_SCORE} />

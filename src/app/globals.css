@@ -391,21 +391,10 @@ a {
   );
 }
 
-/* ── Wireframe: the nearest layer ─────────────────────────────────────
-   A schematic grid in lime — fine 24px lines, a heavier rule at each tile
-   edge, crosshair ticks at the tile centre — echoing the "verified,
-   documented, engineered" narrative the booking spine is built on. Muted
-   to the point of being felt rather than read: the tile's own opacities
-   are scaled again by the layer, and a radial mask dissolves it toward the
-   edges and the copy column. It paints once; parallax moves it on the
-   compositor. */
-.bg-wire {
-  opacity: 0.34;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg stroke='%23C6FF3D' fill='none'%3E%3Cpath d='M0 24H240M0 48H240M0 72H240M0 96H240M0 144H240M0 168H240M0 192H240M0 216H240M24 0V240M48 0V240M72 0V240M96 0V240M144 0V240M168 0V240M192 0V240M216 0V240' stroke-width='0.5' stroke-opacity='0.16'/%3E%3Cpath d='M0 120H240M120 0V240' stroke-width='0.75' stroke-opacity='0.34'/%3E%3Cpath d='M0 0.5H240M0.5 0V240' stroke-width='1' stroke-opacity='0.5'/%3E%3Cpath d='M112 120H128M120 112V128' stroke-width='1' stroke-opacity='0.7'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='1.5' fill='%23C6FF3D' fill-opacity='0.55'/%3E%3C/svg%3E");
-  background-size: 240px 240px;
-  mask-image: radial-gradient(120% 95% at 68% 32%, #000 28%, transparent 82%);
-  -webkit-mask-image: radial-gradient(120% 95% at 68% 32%, #000 28%, transparent 82%);
-}
+/* The schematic grid layer that used to sit here was removed 2026-09-20:
+   its 240px tiling read as boxes ruled across the background rather than
+   as texture. The contour rings carry the engineered narrative instead,
+   and being centred on the light source they have no repeating edges. */
 
 /* ── Aura: the source itself ──────────────────────────────────────────
    Anchored where the ring sits, so the brightest part of the page is the
@@ -475,11 +464,65 @@ a {
   100% { transform: translate3d(-3%, 4%, 0) scale(0.99); }
 }
 
+/* Nav underline, drawn from the left on hover rather than faded in. A rule
+   that grows has a direction and reads as deliberate; one that fades reads
+   as a state change. scaleX on a 1px bar stays on the compositor. */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -6px;
+  height: 1px;
+  background: var(--color-lime);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--duration-short) var(--ease-base);
+}
+
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-link::after {
+    transition: none;
+  }
+}
+
+/* ── Editorial section header ─────────────────────────────────────────
+   Outlined chapter numeral. -webkit-text-stroke rather than a solid fill
+   so it reads as a mark on the page rather than as data — the only loud
+   filled figures on this site are prices and the trust score, and an
+   80px solid numeral beside them would flatten that hierarchy. */
+.section-index {
+  font-size: clamp(2.1rem, 1.4rem + 2.4vw, 3.4rem);
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-charcoal-3);
+}
+
+/* Hairline that runs from the kicker out to the container edge. Fades as
+   it goes so it terminates rather than hitting the margin and stopping. */
+.section-rule {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    var(--color-charcoal-2),
+    transparent 92%
+  );
+}
+
 /* ── Scroll reveals ───────────────────────────────────────────────────
    Set by IntersectionObserver rather than scroll-driven CSS, because the
    reveal must also fire for users whose browser lacks animation-timeline.
    Transform and opacity only, so it stays on the compositor. */
-[data-reveal] {
+[data-reveal],
+[data-reveal-item] {
   opacity: 0;
   transform: translate3d(0, 18px, 0);
   transition:
@@ -487,7 +530,15 @@ a {
     transform var(--duration-long) var(--ease-base);
 }
 
-[data-reveal][data-revealed] {
+/* Cards travel a little further and scale up from just under 1, so a rail
+   reads as being dealt rather than as rows switching on. */
+[data-reveal-item] {
+  transform: translate3d(0, 26px, 0) scale(0.985);
+  transition-delay: var(--item-delay, 0ms);
+}
+
+[data-reveal][data-revealed],
+[data-reveal-item][data-revealed] {
   opacity: 1;
   transform: none;
 }
@@ -517,7 +568,8 @@ a {
   .emission-core { transform: translate3d(-2%, 2%, 0) scale(1.06); }
   .emission-bounce { transform: translate3d(3%, -2%, 0) scale(1.1); }
 
-  [data-reveal] {
+  [data-reveal],
+  [data-reveal-item] {
     opacity: 1;
     transform: none;
     transition: none !important;
