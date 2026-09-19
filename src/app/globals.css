@@ -245,6 +245,10 @@ a {
 .ambient-field {
   position: fixed;
   inset: 0;
+  /* Negative, so page content paints above it without any sibling needing
+     its own stacking rule. Lifting this to 0 forces every sibling to be
+     bumped to z-index 1, which overrides the navbar's sticky positioning —
+     avoid. */
   z-index: -10;
   pointer-events: none;
   overflow: hidden;
@@ -326,6 +330,56 @@ a {
   0% { transform: translate3d(0, 0, 0) scale(1.08); }
   55% { transform: translate3d(9%, -7%, 0) scale(0.96); }
   100% { transform: translate3d(-6%, 4%, 0) scale(1.12); }
+}
+
+/* ── Contour: rings centred on the light source ───────────────────────
+   Concentric rings radiating from 77%/18% — where the hero ring sits — so
+   the geometry reads as a consequence of the light rather than as wallpaper
+   laid over it. Retained from the parallel Copilot branch, which had the
+   better idea here; recoloured to lime only, since its mint/teal stops were
+   outside MOTORA's locked palette. Masked out toward the foot of the
+   viewport so it never reaches the copy below the fold. */
+.bg-contour {
+  opacity: 0.1;
+  background:
+    radial-gradient(
+      ellipse at 77% 18%,
+      transparent 0 22%,
+      rgba(198, 255, 61, 0.32) 22.15%,
+      transparent 22.35% 31%,
+      rgba(198, 255, 61, 0.17) 31.15%,
+      transparent 31.35% 42%,
+      rgba(198, 255, 61, 0.1) 42.15%,
+      transparent 42.35%
+    ),
+    linear-gradient(
+      115deg,
+      transparent 44%,
+      rgba(198, 255, 61, 0.08) 44.15%,
+      transparent 44.35%
+    );
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+@media (max-width: 767px) {
+  .bg-contour {
+    opacity: 0.07;
+  }
+}
+
+/* Pointer parallax rides on its own wrapper inside .bg-aura, so it cannot
+   fight the scroll timeline's transform on the layer itself. GSAP writes
+   the two custom properties; CSS turns them into a translate. */
+.bg-aura-pointer {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+  transform: translate3d(
+    calc(var(--pointer-x, 0) * 1px),
+    calc(var(--pointer-y, 0) * 1px),
+    0
+  );
 }
 
 /* ── Wireframe: the nearest layer ─────────────────────────────────────
@@ -445,11 +499,12 @@ a {
   .bg-mesh > span {
     animation: none !important;
   }
-  /* Parallax is skipped entirely in ambient-backdrop.tsx under this query;
-     the layers simply hold their rest composition. */
+  /* Parallax and pointer tracking are both skipped in ambient-backdrop.tsx
+     under this query; the layers simply hold their rest composition. */
   .bg-mesh-a { transform: translate3d(3%, 2%, 0) scale(1.06); }
   .bg-mesh-b { transform: translate3d(-4%, -3%, 0) scale(1.1); }
   .bg-mesh-c { transform: translate3d(4%, -3%, 0) scale(1.02); }
+  .bg-aura-pointer { --pointer-x: 0; --pointer-y: 0; }
   .emission-core { transform: translate3d(-2%, 2%, 0) scale(1.06); }
   .emission-bounce { transform: translate3d(3%, -2%, 0) scale(1.1); }
 
