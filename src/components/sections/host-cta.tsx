@@ -19,7 +19,7 @@ export function HostCta() {
         <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-12">
           <div className="lg:col-span-6">
             <SectionIntro
-              index="05"
+              index="06"
               kicker="For owners"
               headingId="host-cta-heading"
               heading="Your vehicle is idle most of the week"

@@ -51,7 +51,7 @@ export function Faq() {
         style={{ paddingBlock: "var(--section-y)" }}
       >
         <SectionIntro
-          index="06"
+          index="07"
           kicker="Before you ask"
           headingId="faq-heading"
           heading="The questions that decide it"

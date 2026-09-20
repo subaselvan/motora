@@ -564,6 +564,50 @@ a {
   .hero-blob-3 { transform: translate3d(-3%, -4%, 0) scale(1.04); }
 }
 
+/* ── Product preview device frame ─────────────────────────────────────
+   A device shell rather than a plain card, because the content inside is
+   application UI and needs to read as a screen rather than as another
+   panel on the marketing page.
+
+   Deliberately understated: no notch, no glare, no hardware buttons. A
+   photoreal phone would date immediately and compete with the UI it is
+   supposed to be presenting. */
+.phone-frame {
+  position: relative;
+  border-radius: 1.75rem;
+  padding: 0.5rem;
+  border: 1px solid var(--color-charcoal-2);
+  background: linear-gradient(
+    180deg,
+    var(--color-obsidian-lighter),
+    var(--color-obsidian)
+  );
+  box-shadow: var(--elev);
+}
+
+/* The speaker slot. One 4px bar is enough to read as a device; anything
+   more becomes an illustration of a phone. */
+.phone-frame::before {
+  content: "";
+  position: absolute;
+  top: 1.05rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.25rem;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--color-charcoal-2);
+  z-index: 1;
+}
+
+.phone-screen {
+  overflow: hidden;
+  border-radius: 1.35rem;
+  background: var(--color-obsidian);
+  border: 1px solid var(--color-charcoal-1);
+  padding-top: 1.5rem;
+}
+
 /* ── FAQ accordion ────────────────────────────────────────────────────
    Native details/summary. The marker is removed on both engines because
    Safari still uses ::-webkit-details-marker rather than list-style. */
