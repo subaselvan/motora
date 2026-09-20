@@ -564,6 +564,116 @@ a {
   .hero-blob-3 { transform: translate3d(-3%, -4%, 0) scale(1.04); }
 }
 
+/* ── FAQ accordion ────────────────────────────────────────────────────
+   Native details/summary. The marker is removed on both engines because
+   Safari still uses ::-webkit-details-marker rather than list-style. */
+.faq-item {
+  border-bottom: 1px solid var(--color-charcoal-1);
+}
+
+.faq-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+  cursor: pointer;
+  list-style: none;
+  transition: color var(--duration-short) var(--ease-base);
+}
+
+.faq-summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-summary:hover .faq-icon,
+.faq-item[open] .faq-icon {
+  color: var(--color-lime);
+}
+
+/* The icon rotates to a cross when open: one glyph carrying both states
+   costs less than swapping two icons and cannot desync from the state. */
+.faq-icon {
+  transition: transform var(--duration-short) var(--ease-base),
+    color var(--duration-short) var(--ease-base);
+}
+
+.faq-item[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+/* Keyboard focus lands on the summary, so the ring must be visible there
+   and not only on the inner text. */
+.faq-summary:focus-visible {
+  outline: 2px solid var(--color-lime);
+  outline-offset: 4px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-icon {
+    transition: none;
+  }
+}
+
+/* ── Booking spine rail ───────────────────────────────────────────────
+   One rail down the list with a node per step. The rail carries the
+   section's actual claim — that these are one connected sequence, not six
+   independent features — so it is structural rather than ornament.
+
+   Centred on the node column (1.5rem of a 3rem track, 2.25rem of 4.5rem
+   at md) and inset vertically so it starts and ends inside the first and
+   last nodes instead of overshooting into empty space. */
+.spine-rail {
+  position: absolute;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  left: calc(1.5rem - 1px);
+  width: 2px;
+  background: var(--color-charcoal-1);
+}
+
+@media (min-width: 768px) {
+  .spine-rail {
+    left: calc(2.25rem - 1px);
+  }
+}
+
+/* GSAP scrubs scaleY 0 -> 1. transform-origin top so it grows downward,
+   which is the direction the reader is travelling. */
+.spine-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: top;
+  background: linear-gradient(
+    to bottom,
+    var(--color-lime),
+    color-mix(in srgb, var(--color-lime) 40%, transparent)
+  );
+}
+
+.spine-node {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-charcoal-2);
+  /* Opaque, so the rail passes behind the node rather than through it. */
+  background: var(--color-obsidian);
+  color: var(--color-lime);
+}
+
+/* Under reduced motion the fill never scrubs, so a bare charcoal rail
+   would read as permanently unstarted. Show it complete instead. */
+@media (prefers-reduced-motion: reduce) {
+  .spine-fill {
+    transform: scaleY(1);
+  }
+}
+
 /* ── Full-bleed marquee ───────────────────────────────────────────────
    The one section that runs edge to edge. Two identical tracks sit side
    by side and the pair travels exactly -50%, so at the end of the cycle

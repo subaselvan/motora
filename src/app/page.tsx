@@ -9,6 +9,7 @@ import { Comparison } from "@/components/sections/comparison";
 import { TrustLedgerSection } from "@/components/sections/trust-ledger-section";
 import { BookingSpine } from "@/components/sections/booking-spine";
 import { HostCta } from "@/components/sections/host-cta";
+import { Faq } from "@/components/sections/faq";
 import { Footer } from "@/components/sections/footer";
 
 export default function Home() {
@@ -29,6 +30,10 @@ export default function Home() {
         <TrustLedgerSection />
         <BookingSpine />
         <HostCta />
+        {/* Objections last: by here the reader has the argument and the
+            proof, and what is left is the specific thing still stopping
+            them. */}
+        <Faq />
       </main>
       <Footer />
     </>
