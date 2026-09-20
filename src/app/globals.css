@@ -86,6 +86,11 @@
   --text-h1: clamp(2.1rem, 1.4rem + 2.9vw, 3.25rem);
   --text-h2: clamp(1.6rem, 1.2rem + 1.7vw, 2.35rem);
   --text-figure: clamp(2.4rem, 1.7rem + 3vw, 3.9rem);
+  /* The same figure shown somewhere secondary. The trust score previously
+     rendered at var(--text-figure) in the hero ring but a raw text-4xl in
+     the ledger card — one datum on two different scales. This puts the
+     smaller instance on the same fluid system. */
+  --text-figure-sm: clamp(1.9rem, 1.45rem + 1.5vw, 2.6rem);
 
   /* ONE section rhythm, used at every seam. Previously each section set its
      own py-16 md:py-24, which stepped 64 -> 96px at a single breakpoint and
@@ -467,6 +472,111 @@ a {
   0% { transform: translate3d(0, 0, 0) scale(1.04); }
   45% { transform: translate3d(7%, -5%, 0) scale(1.18); }
   100% { transform: translate3d(-3%, 4%, 0) scale(0.99); }
+}
+
+/* ── Hero mesh gradient ───────────────────────────────────────────────
+   Scoped to the hero only, layered UNDER the copy-column scrim (-z-6 vs
+   -z-5) so the scrim still does its legibility job over the top. The
+   page-level field stays exactly as it is everywhere else; this gives the
+   one section that has to carry the first impression more presence than
+   the ambient texture alone provides.
+
+   Blurred blobs rather than a static gradient: a blur means the edges
+   never resolve into a shape the eye can lock onto, which is the
+   difference between atmosphere and a coloured blob sitting on the page.
+   Durations are coprime (19/23/29s) so the three never return to the same
+   arrangement inside a session. */
+.hero-mesh {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero-mesh > span {
+  position: absolute;
+  display: block;
+  border-radius: 50%;
+  filter: blur(60px);
+  will-change: transform;
+}
+
+.hero-blob-1 {
+  top: -18%;
+  right: 4%;
+  width: 34vmax;
+  height: 34vmax;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-lime) 16%, transparent),
+    transparent 72%
+  );
+  animation: hero-drift-1 19s var(--ease-base) infinite alternate;
+}
+
+.hero-blob-2 {
+  bottom: -24%;
+  left: 12%;
+  width: 28vmax;
+  height: 28vmax;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-orange) 11%, transparent),
+    transparent 70%
+  );
+  animation: hero-drift-2 23s var(--ease-base) infinite alternate;
+}
+
+.hero-blob-3 {
+  top: 22%;
+  right: 30%;
+  width: 24vmax;
+  height: 24vmax;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--color-lime) 9%, transparent),
+    transparent 68%
+  );
+  animation: hero-drift-3 29s var(--ease-base) infinite alternate;
+}
+
+@keyframes hero-drift-1 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-7%, 6%, 0) scale(1.14); }
+}
+@keyframes hero-drift-2 {
+  from { transform: translate3d(0, 0, 0) scale(1.06); }
+  to { transform: translate3d(9%, -7%, 0) scale(0.96); }
+}
+@keyframes hero-drift-3 {
+  from { transform: translate3d(0, 0, 0) scale(0.98); }
+  to { transform: translate3d(-6%, -9%, 0) scale(1.1); }
+}
+
+/* Static fallback, not a frozen frame: the blobs hold a composition that
+   was chosen, and the blur stays so it still reads as atmosphere. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-mesh > span {
+    animation: none !important;
+  }
+  .hero-blob-1 { transform: translate3d(-3%, 3%, 0) scale(1.07); }
+  .hero-blob-2 { transform: translate3d(4%, -3%, 0) scale(1.01); }
+  .hero-blob-3 { transform: translate3d(-3%, -4%, 0) scale(1.04); }
+}
+
+/* ── Live data emphasis ───────────────────────────────────────────────
+   Primary figures (price, trust score) get a faint lime bloom so they
+   read as lit readouts rather than as text that happens to be coloured —
+   the Revolut/CRED lesson that numbers should feel like live data. Text
+   shadow only: no layout cost, and it cannot shift a single pixel.
+   Deliberately NOT applied to specs, ratings or metadata, or the
+   distinction it exists to create disappears. */
+.data-primary {
+  text-shadow: 0 0 18px color-mix(in srgb, var(--color-lime) 32%, transparent);
+}
+
+.data-primary-orange {
+  text-shadow: 0 0 18px color-mix(in srgb, var(--color-orange) 30%, transparent);
 }
 
 /* Locked state: a slow breath on the border and fill, never on opacity of

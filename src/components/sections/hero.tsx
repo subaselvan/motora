@@ -73,6 +73,15 @@ export function Hero() {
           Scoped to md and up because the shader only mounts there — below
           that the CSS field is already measured safe and scrimming it would
           just dim the design for nothing. */}
+      {/* Hero-only mesh, under the scrim at -z-6 so the scrim above still
+          protects the copy column. The page's ambient field is unchanged
+          everywhere else. */}
+      <div aria-hidden="true" className="hero-mesh -z-[6]">
+        <span className="hero-blob-1" />
+        <span className="hero-blob-2" />
+        <span className="hero-blob-3" />
+      </div>
+
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-[5] hidden bg-[linear-gradient(to_right,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_42%,transparent_72%)] md:block"

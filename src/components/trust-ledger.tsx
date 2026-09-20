@@ -71,7 +71,8 @@ export function TrustLedger({
         <p
           data-figure
           aria-label={`Sample trust score ${DEMO_TRUST_SCORE} of 100`}
-          className="font-heading text-4xl font-bold leading-none text-lime"
+          className="data-primary font-heading font-bold leading-none text-lime"
+          style={{ fontSize: "var(--text-figure-sm)" }}
         >
           {score}
           <span className="ml-0.5 font-body text-sm font-normal text-pearl-muted">

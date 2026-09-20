@@ -252,7 +252,7 @@ export function HeroTrustRing() {
         </p>
         <p
           data-figure
-          className="mt-1 font-heading font-bold leading-none tracking-[-0.03em] text-pearl"
+          className="data-primary mt-1 font-heading font-bold leading-none tracking-[-0.03em] text-pearl"
           style={{ fontSize: "var(--text-figure)" }}
         >
           {score}

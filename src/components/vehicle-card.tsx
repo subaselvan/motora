@@ -192,7 +192,7 @@ function RideDriveCard({
                 actually be loud rather than matching the title's weight. */}
             <p
               data-figure
-              className="font-heading text-2xl font-bold leading-none tracking-[-0.02em] text-lime"
+              className="data-primary font-heading text-2xl font-bold leading-none tracking-[-0.02em] text-lime"
             >
               {formatINR(vehicle.perDay)}
               <span className="ml-1 font-body text-xs font-medium tracking-normal text-pearl-muted">
