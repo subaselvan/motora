@@ -28,10 +28,17 @@
   --color-charcoal-2: #3C3C41;
   --color-charcoal-3: #54545A;
 
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
+  /* The one semantic colour that earns its place: form validation needs a
+     red that is neither lime nor orange, and input.tsx consumes it through
+     aria-invalid:border-error. success / warning / info were declared and
+     never consumed — deleted 2026-09-21, #3B82F6 among them, so no
+     off-brand hue sits in the palette waiting to be reached for. */
   --color-error: #EF4444;
-  --color-info: #3B82F6;
+
+  /* Named rather than magic: every shadow in the system is tinted toward
+     the obsidian hue and must sit below the darkest surface to read at
+     all. This is the value --elev already used inline. */
+  --color-shadow: #040408;
 
   /* Spacing — 8px base scale */
   --space-1: 4px;
@@ -96,10 +103,11 @@
      surface tone (sunken -> page -> light -> lighter) and border strength,
      not from stacking shadow weights. Tinted toward the obsidian hue rather
      than pure black. */
-  --elev: 0 1px 2px rgba(4, 4, 8, 0.55),
-          0 10px 24px -10px rgba(4, 4, 8, 0.65);
+  --elev: 0 1px 2px color-mix(in srgb, var(--color-shadow) 55%, transparent),
+          0 10px 24px -10px color-mix(in srgb, var(--color-shadow) 65%, transparent);
   /* A recess, not an elevation tier: inputs and wells sit below the page. */
-  --elev-sunken: inset 0 1px 2px rgba(4, 4, 8, 0.6);
+  --elev-sunken: inset 0 1px 2px
+    color-mix(in srgb, var(--color-shadow) 60%, transparent);
 }
 
 @theme inline {
@@ -125,10 +133,7 @@
   --color-charcoal-2: var(--color-charcoal-2);
   --color-charcoal-3: var(--color-charcoal-3);
 
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
   --color-error: var(--color-error);
-  --color-info: var(--color-info);
 
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);

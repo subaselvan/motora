@@ -46,7 +46,10 @@ function CardShell({
     <article
       className={[
         "group relative flex flex-col overflow-hidden rounded-[var(--radius-md)]",
-        "border border-charcoal-1 bg-[linear-gradient(180deg,#1a1a1f_0%,#0e0e11_100%)]",
+        // Token-mapped 2026-09-21: was #1a1a1f -> #0e0e11, two greys that
+        // existed nowhere in the palette. obsidian-lighter -> obsidian is
+        // within a value or two of the originals and is nameable.
+        "border border-charcoal-1 bg-[linear-gradient(180deg,var(--color-obsidian-lighter)_0%,var(--color-obsidian)_100%)]",
         // Glow bleeding off the top-left corner. A pseudo-element so it paints
         // behind every positioned child rather than over the info panel.
         "before:pointer-events-none before:absolute before:-left-14 before:-top-14 before:h-44 before:w-44 before:rounded-full before:bg-[radial-gradient(closest-side,rgba(198,255,61,0.13),transparent)] before:transition-opacity before:duration-[var(--duration-moderate)] before:content-['']",
@@ -62,7 +65,7 @@ function CardShell({
               // the hover reads as the card catching the page's light rather
               // than as a generic drop shadow.
               "hover:-translate-y-1 hover:border-charcoal-3",
-              "hover:shadow-[0_1px_2px_rgba(4,4,8,0.55),0_18px_40px_-18px_rgba(4,4,8,0.8),0_0_36px_-12px_rgba(198,255,61,0.25)]",
+              "hover:shadow-[0_1px_2px_color-mix(in_srgb,var(--color-shadow)_55%,transparent),0_18px_40px_-18px_color-mix(in_srgb,var(--color-shadow)_80%,transparent),0_0_36px_-12px_rgba(198,255,61,0.25)]",
               "hover:after:opacity-100 hover:before:opacity-[1.6]",
             ].join(" "),
       ].join(" ")}
@@ -131,10 +134,10 @@ function RideDriveCard({
       {/* Photo slot. Shaped and scrimmed for the real vehicle photography:
           drop next/image in with object-cover and the badges, scrim and
           frame all stay exactly where they are. */}
-      <div className="relative aspect-[4/3] overflow-hidden border-b border-white/10 bg-[radial-gradient(120%_90%_at_20%_0%,#23232c_0%,#141419_58%,#0c0c0f_100%)]">
+      <div className="relative aspect-[4/3] overflow-hidden border-b border-pearl/10 bg-[radial-gradient(120%_90%_at_20%_0%,var(--color-obsidian-lighter)_0%,var(--color-obsidian-light)_58%,var(--color-obsidian)_100%)]">
         <div
           aria-hidden="true"
-          className="absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,#54545a_1px,transparent_1px),linear-gradient(to_bottom,#54545a_1px,transparent_1px)] [background-size:28px_28px]"
+          className="absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,var(--color-charcoal-3)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-charcoal-3)_1px,transparent_1px)] [background-size:28px_28px]"
         />
         <div
           aria-hidden="true"
@@ -142,7 +145,7 @@ function RideDriveCard({
         />
         <div
           aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-2/5 bg-[linear-gradient(to_top,rgba(6,6,9,0.85),transparent)]"
+          className="absolute inset-x-0 bottom-0 h-2/5 bg-[linear-gradient(to_top,color-mix(in_srgb,var(--color-obsidian-sunken)_85%,transparent),transparent)]"
         />
 
         <div className="absolute left-3 top-3 flex gap-1.5">
@@ -162,7 +165,7 @@ function RideDriveCard({
       {/* Translucent, not backdrop-blurred: these cards live inside horizontal
           scrollers, where blur costs a repaint per frame and has nothing behind
           it to blur anyway. */}
-      <div className="relative flex flex-1 flex-col gap-3 bg-[rgba(18,18,21,0.82)] p-4">
+      <div className="relative flex flex-1 flex-col gap-3 bg-[color-mix(in_srgb,var(--color-obsidian-light)_82%,transparent)] p-4">
         <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
           <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
           {vehicle.model}
@@ -245,7 +248,7 @@ function HeavyFarmCard({
     <CardShell locked={locked}>
       {/* Specs occupy the position the photo holds on a consumer card. */}
       <div
-        className="relative grid border-b border-white/10 bg-obsidian/70"
+        className="relative grid border-b border-pearl/10 bg-obsidian/70"
         style={{ gridTemplateColumns: `repeat(${stats.length}, minmax(0, 1fr))` }}
       >
         {stats.map((stat) => (
@@ -263,7 +266,7 @@ function HeavyFarmCard({
         ))}
       </div>
 
-      <div className="relative flex flex-1 flex-col gap-3 bg-[rgba(18,18,21,0.82)] p-4">
+      <div className="relative flex flex-1 flex-col gap-3 bg-[color-mix(in_srgb,var(--color-obsidian-light)_82%,transparent)] p-4">
         <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
           <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
           {vehicle.model}

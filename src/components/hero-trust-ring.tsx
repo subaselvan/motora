@@ -26,8 +26,41 @@ const NEXT_TIER = TRUST_TIERS.find((t) => t.score > DEMO_TRUST_SCORE);
  * It also reads as the light source the rest of the page is lit by, so
  * the lime in the background has somewhere to have come from.
  */
+/**
+ * Top-down go-kart, nose pointing along +x so a rotation of 0deg faces the
+ * direction of travel at twelve o'clock. Drawn at roughly 26x20 units and
+ * placed by the caller, which owns position and heading.
+ *
+ * The kart rather than a plain dot because MOTORA's mark is a go-kart and
+ * the promise is "rent anything that moves" — the one element on the page
+ * that literally moves should be the vehicle, not an abstract indicator.
+ */
+function KartGlyph() {
+  return (
+    <g>
+      {/* Tyres first so the chassis overlaps them. */}
+      <g fill="var(--color-obsidian)" stroke="var(--color-lime)" strokeWidth="1">
+        <rect x="-11" y="-11.5" width="7.5" height="5" rx="2" />
+        <rect x="-11" y="6.5" width="7.5" height="5" rx="2" />
+        <rect x="4" y="-10" width="6.5" height="4.5" rx="2" />
+        <rect x="4" y="5.5" width="6.5" height="4.5" rx="2" />
+      </g>
+      {/* Chassis: tapered nose to the right, wide rear deck. */}
+      <path
+        d="M-12.5 -5.5 L1 -6.5 L13 -2.6 L13 2.6 L1 6.5 L-12.5 5.5 Z"
+        fill="var(--color-lime)"
+      />
+      {/* Cockpit, punched out of the chassis so the kart reads at 26px. */}
+      <circle cx="-3.5" cy="0" r="3.4" fill="var(--color-obsidian)" />
+    </g>
+  );
+}
+
 export function HeroTrustRing() {
   const [score, setScore] = useState(DEMO_TRUST_SCORE);
+  // Unrounded twin of `score`. The readout wants integers; the kart wants
+  // sub-degree precision or it visibly judders around the arc.
+  const [progress, setProgress] = useState(DEMO_TRUST_SCORE);
   const ref = useRef<HTMLDivElement>(null);
   const played = useRef(false);
 
@@ -42,14 +75,19 @@ export function HeroTrustRing() {
         played.current = true;
         observer.disconnect();
 
-        const duration = 1200;
+        // Longer than the old 1200ms: the kart now has to read as driving a
+        // lap, and at 1.2s it teleported rather than travelled.
+        const duration = 2100;
         const start = performance.now();
         setScore(0);
+        setProgress(0);
 
         const tick = (now: number) => {
           const t = Math.min((now - start) / duration, 1);
-          // Exponential ease-out: fast commitment, settled landing.
+          // Exponential ease-out: fast commitment, settled landing. Reads as
+          // a kart accelerating away and braking into its final position.
           const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+          setProgress(DEMO_TRUST_SCORE * eased);
           setScore(Math.round(DEMO_TRUST_SCORE * eased));
           if (t < 1) requestAnimationFrame(tick);
         };
@@ -62,7 +100,12 @@ export function HeroTrustRing() {
     return () => observer.disconnect();
   }, []);
 
-  const head = pointAt(score, R);
+  // Both driven by the unrounded value so the kart and the arc head stay
+  // welded together frame to frame.
+  const head = pointAt(progress, R);
+  // Tangent of a circle traversed clockwise from twelve o'clock: the
+  // heading in degrees is just the progress around the lap.
+  const heading = (progress / 100) * 360;
   const remaining = NEXT_TIER ? NEXT_TIER.score - DEMO_TRUST_SCORE : 0;
 
   return (
@@ -177,19 +220,30 @@ export function HeroTrustRing() {
           strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={CIRC}
-          strokeDashoffset={CIRC * (1 - score / 100)}
+          strokeDashoffset={CIRC * (1 - progress / 100)}
           transform={`rotate(-90 ${C} ${C})`}
         />
 
-        {/* Leading head: the brightest point on the page, and the notional
-            origin of the light in the background field. */}
+        {/* The kart leads the arc it is drawing. Bloom sits underneath as a
+            separate disc rather than filtering the kart itself — blurring
+            the glyph would dissolve the wheels and cockpit that make it
+            read as a vehicle at this size. */}
         <circle
           cx={head.x}
           cy={head.y}
           r="7"
           fill="var(--color-lime)"
+          opacity="0.32"
           filter="url(#ring-bloom)"
         />
+        {/* 1.5x: at native scale the wheels and cockpit collapsed into an
+            indistinct blob. This is the smallest size at which it still
+            reads as a kart rather than as a marker. */}
+        <g
+          transform={`translate(${head.x} ${head.y}) rotate(${heading}) scale(1.5)`}
+        >
+          <KartGlyph />
+        </g>
       </svg>
 
       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
