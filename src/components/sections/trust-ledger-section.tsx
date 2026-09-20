@@ -31,7 +31,7 @@ export function TrustLedgerSection() {
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
         <SectionIntro
-          index="02"
+          index="03"
           kicker="Trust protocol"
           headingId="trust-heading"
           heading="Categories unlock as your record grows."

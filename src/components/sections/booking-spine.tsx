@@ -50,7 +50,7 @@ export function BookingSpine() {
       <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
         <div className="max-w-[55ch]">
           <SectionIntro
-            index="03"
+            index="04"
             kicker="The spine"
             headingId="spine-heading"
             heading="The spine of every rental"

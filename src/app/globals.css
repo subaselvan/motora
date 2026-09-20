@@ -564,6 +564,100 @@ a {
   .hero-blob-3 { transform: translate3d(-3%, -4%, 0) scale(1.04); }
 }
 
+/* ── Full-bleed marquee ───────────────────────────────────────────────
+   The one section that runs edge to edge. Two identical tracks sit side
+   by side and the pair travels exactly -50%, so at the end of the cycle
+   the second copy occupies the first's starting position and the reset is
+   invisible. Any other distance shows a jump.
+
+   Edges are masked rather than clipped: without the fade, words appear
+   and vanish at the viewport boundary, which makes the loop legible as a
+   loop instead of reading as continuous movement. */
+.marquee {
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+}
+
+.marquee-viewport {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 42s linear infinite;
+  will-change: transform;
+}
+
+/* Pause on hover so a reader can actually rest their eye on a word. */
+.marquee:hover .marquee-viewport {
+  animation-play-state: paused;
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-heading), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 1.1rem + 2.2vw, 3rem);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  white-space: nowrap;
+  /* Outlined, not filled: at this size a solid lime word would outshout
+     the price and trust figures that are meant to be the loud ones. */
+  color: transparent;
+  -webkit-text-stroke: 1px var(--color-charcoal-3);
+  padding-inline: var(--space-5);
+}
+
+/* Every third word takes the accent, so the strip has a rhythm rather
+   than reading as one undifferentiated ribbon of outline type. */
+.marquee-item:nth-child(3n + 1) {
+  -webkit-text-stroke-color: color-mix(
+    in srgb,
+    var(--color-lime) 55%,
+    transparent
+  );
+}
+
+.marquee-dot {
+  width: 6px;
+  height: 6px;
+  margin-inline-start: var(--space-5);
+  border-radius: 50%;
+  background: var(--color-orange);
+  opacity: 0.55;
+  flex: none;
+}
+
+@keyframes marquee-scroll {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+
+/* Reduced motion keeps the strip and its composition, just still. The
+   mask stays so the ends still read as "continues past the edge". */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-viewport {
+    animation: none !important;
+  }
+}
+
 /* ── Live data emphasis ───────────────────────────────────────────────
    Primary figures (price, trust score) get a faint lime bloom so they
    read as lit readouts rather than as text that happens to be coloured —
