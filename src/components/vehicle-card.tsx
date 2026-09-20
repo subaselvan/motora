@@ -93,7 +93,7 @@ function BookCta({
     return (
       <span
         className={[
-          "inline-flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border border-orange/40 bg-orange/[0.08] px-3 text-xs font-medium text-orange",
+          "locked-pill inline-flex h-8 items-center justify-center gap-1.5 rounded-[var(--radius-sm)] border px-3 text-xs font-medium text-orange",
           className ?? "",
         ].join(" ")}
       >

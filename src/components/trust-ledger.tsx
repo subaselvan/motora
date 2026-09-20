@@ -59,7 +59,7 @@ export function TrustLedger({
       /* The trust section's focal panel, on the single shadow tier. */
       className="overflow-hidden rounded-[var(--radius-md)] border border-charcoal-2 bg-obsidian-light shadow-[var(--elev)]"
     >
-      <div className="flex items-baseline justify-between gap-4 border-b border-charcoal-1 px-5 py-4">
+      <div className="flex items-baseline justify-between gap-4 border-b border-charcoal-1 px-6 py-4">
         <div>
           <h2 className="font-heading text-sm font-medium text-pearl">
             Sample trust record
@@ -88,7 +88,7 @@ export function TrustLedger({
             <li
               key={tier.category}
               data-active={active || undefined}
-              className="flex items-center gap-3 px-5 py-2.5 transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] data-[active]:bg-lime/[0.07]"
+              className="flex items-center gap-3 px-6 py-2.5 transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)] data-[active]:bg-lime/[0.07]"
             >
               <span
                 className={[
@@ -130,7 +130,7 @@ export function TrustLedger({
         })}
       </ul>
 
-      <p className="border-t border-charcoal-1 px-5 py-3 text-xs leading-relaxed text-pearl-muted">
+      <p className="border-t border-charcoal-1 px-6 py-3 text-xs leading-relaxed text-pearl-muted">
         Return on time, document condition, communicate. The record follows you
         from a scooter to an excavator.
       </p>

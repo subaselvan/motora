@@ -38,7 +38,7 @@ export function TrustLedgerSection() {
           lede="Every platform makes you start from zero. Here the record is the account: a scooter rental in Coimbatore is what qualifies you for a backhoe in Chennai two seasons later."
         />
 
-        <div className="mt-16 grid gap-10 lg:grid-cols-12 lg:gap-12 md:mt-20">
+        <div className="mt-16 grid gap-12 lg:grid-cols-12 lg:gap-12 md:mt-24">
           <div className="lg:col-span-6">
             <dl className="space-y-4 border-t border-charcoal-1 pt-6">
               {MOVEMENTS.map((movement) => (

@@ -52,7 +52,7 @@ export default async function SearchPage({
   return (
     <>
       <Navbar />
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 md:px-6 md:py-14">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-12 md:px-6 md:py-16">
         <h1 className="font-heading text-3xl font-bold tracking-[-0.02em] text-pearl md:text-4xl">
           {results.length} {results.length === 1 ? "vehicle" : "vehicles"}
         </h1>
@@ -80,7 +80,7 @@ export default async function SearchPage({
         </nav>
 
         {results.length > 0 ? (
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((vehicle) => (
               <li key={vehicle.id}>
                 <VehicleCard vehicle={vehicle} trustScore={DEMO_TRUST_SCORE} />
@@ -88,7 +88,7 @@ export default async function SearchPage({
             ))}
           </ul>
         ) : (
-          <div className="mt-10 rounded-[var(--radius-md)] border border-charcoal-1 bg-obsidian-light px-6 py-12 text-center">
+          <div className="mt-12 rounded-[var(--radius-md)] border border-charcoal-1 bg-obsidian-light px-6 py-12 text-center">
             <p className="font-heading text-lg font-semibold text-pearl">
               Nothing matches that yet
             </p>
@@ -98,14 +98,14 @@ export default async function SearchPage({
             </p>
             <Link
               href="/search"
-              className="mt-5 inline-flex rounded-[var(--radius-sm)] text-sm font-medium text-orange transition-colors hover:text-orange-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime"
+              className="mt-6 inline-flex rounded-[var(--radius-sm)] text-sm font-medium text-orange transition-colors hover:text-orange-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime"
             >
               Clear filters
             </Link>
           </div>
         )}
 
-        <p className="mt-10 text-xs text-pearl-muted">
+        <p className="mt-12 text-xs text-pearl-muted">
           Demo inventory. Vehicles, prices and ratings shown here are authored
           for this preview, not live listings.
         </p>

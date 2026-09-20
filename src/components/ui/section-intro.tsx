@@ -46,7 +46,7 @@ export function SectionIntro({
         <span aria-hidden="true" className="section-rule" />
       </div>
 
-      <div className="mt-7 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div className="mt-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div className="max-w-[24ch]">
           <h2
             id={headingId}

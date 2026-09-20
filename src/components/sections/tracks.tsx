@@ -57,7 +57,7 @@ export function Tracks() {
           lede="A commuter and a contractor need different things from a rental. They should not need different companies."
         />
 
-        <div className="mt-16 space-y-20 md:mt-20">
+        <div className="mt-16 space-y-24 md:mt-24">
           {TRACKS.map((track) => (
             <div key={track.id}>
               <div className="flex flex-col gap-4 border-b border-charcoal-1 pb-6 md:flex-row md:items-end md:justify-between">

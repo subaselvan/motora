@@ -469,6 +469,34 @@ a {
   100% { transform: translate3d(-3%, 4%, 0) scale(0.99); }
 }
 
+/* Locked state: a slow breath on the border and fill, never on opacity of
+   the label itself — the word has to stay readable at every frame. Six
+   seconds because this is ambient reassurance that the tier is reachable,
+   not a notification demanding attention; anything faster reads as an
+   error state blinking at you. */
+@keyframes locked-breathe {
+  0%, 100% {
+    border-color: color-mix(in srgb, var(--color-orange) 40%, transparent);
+    background-color: color-mix(in srgb, var(--color-orange) 8%, transparent);
+  }
+  50% {
+    border-color: color-mix(in srgb, var(--color-orange) 70%, transparent);
+    background-color: color-mix(in srgb, var(--color-orange) 16%, transparent);
+  }
+}
+
+.locked-pill {
+  animation: locked-breathe 6s var(--ease-base) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .locked-pill {
+    animation: none !important;
+    border-color: color-mix(in srgb, var(--color-orange) 55%, transparent);
+    background-color: color-mix(in srgb, var(--color-orange) 12%, transparent);
+  }
+}
+
 /* Nav underline, drawn from the left on hover rather than faded in. A rule
    that grows has a direction and reads as deliberate; one that fades reads
    as a state change. scaleX on a 1px bar stays on the compositor. */

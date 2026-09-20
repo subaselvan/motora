@@ -1,7 +1,6 @@
 "use client";
 
 import { useId, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Camera, MapPin, ReceiptText, Search, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,10 +18,41 @@ const PROOF = [
   { icon: Camera, label: "Photo-verified condition" },
 ] as const;
 
+/** A filter toggle, not a link: aria-pressed rather than tab semantics,
+ *  because nothing swaps panels — it only narrows what the search submits. */
+function CategoryTab({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={[
+        "shrink-0 whitespace-nowrap rounded-[var(--radius-sm)] px-3 py-1.5 font-body text-sm",
+        "transition-colors duration-[var(--duration-short)] ease-[var(--ease-base)]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime",
+        active
+          ? "bg-lime text-lime-ink font-medium"
+          : "text-pearl-dim hover:bg-obsidian-lighter hover:text-pearl",
+      ].join(" ")}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function Hero() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
+  const [category, setCategory] = useState<string | null>(null);
   const queryId = useId();
   const locationId = useId();
 
@@ -31,6 +61,7 @@ export function Hero() {
     const params = new URLSearchParams();
     if (query) params.set("q", query);
     if (location) params.set("city", location);
+    if (category) params.set("category", category);
     router.push(`/search${params.toString() ? `?${params}` : ""}`);
   }
 
@@ -47,8 +78,8 @@ export function Hero() {
         className="pointer-events-none absolute inset-0 -z-[5] hidden bg-[linear-gradient(to_right,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_42%,transparent_72%)] md:block"
       />
 
-      <div className="relative mx-auto max-w-7xl px-4 pt-14 md:px-6 md:pt-20">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10">
+      <div className="relative mx-auto max-w-7xl px-4 pt-16 md:px-6 md:pt-24">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-6">
             <div data-reveal className="flex flex-wrap gap-2">
               <Badge variant="outline-trust">Self-drive</Badge>
@@ -59,7 +90,7 @@ export function Hero() {
               id="hero-heading"
               data-reveal
               data-reveal-delay="1"
-              className="mt-5 font-heading font-bold leading-[1.03] tracking-[-0.03em] text-pearl"
+              className="mt-6 font-heading font-bold leading-[1.03] tracking-[-0.03em] text-pearl"
               style={{ fontSize: "var(--text-display)" }}
             >
               Rent anything
@@ -70,7 +101,7 @@ export function Hero() {
             <p
               data-reveal
               data-reveal-delay="2"
-              className="mt-5 max-w-[52ch] text-lg leading-relaxed text-pearl-dim"
+              className="mt-6 max-w-[52ch] text-lg leading-relaxed text-pearl-dim"
             >
               From Royal Enfields to JCBs. One account, one licence check, and a
               trust record that follows you across every category.
@@ -81,8 +112,38 @@ export function Hero() {
               data-reveal
               data-reveal-delay="3"
               /* Shares the single shadow tier; the page's primary action. */
-              className="mt-8 flex flex-col gap-2 rounded-[var(--radius-lg)] border border-charcoal-2 bg-obsidian-light p-2 shadow-[var(--elev)] sm:flex-row"
+              className="mt-8 rounded-[var(--radius-lg)] border border-charcoal-2 bg-obsidian-light p-2 shadow-[var(--elev)]"
             >
+              {/* Category lives inside the search rather than in its own row
+                  below the fold. Turo and Sixt both do this, and it is the
+                  one structural move that makes the search the single
+                  dominant object on the page instead of one element among
+                  several. The seven categories remain crawlable as real
+                  links in the footer's long-tail section, so folding them
+                  into filter state here costs no SEO. */}
+              <div
+                role="group"
+                aria-label="Filter by category"
+                className="-mx-1 mb-2 flex gap-1 overflow-x-auto border-b border-charcoal-1 px-1 pb-2"
+              >
+                <CategoryTab
+                  active={category === null}
+                  onClick={() => setCategory(null)}
+                >
+                  All
+                </CategoryTab>
+                {CATEGORIES.map((c) => (
+                  <CategoryTab
+                    key={c.id}
+                    active={category === c.id}
+                    onClick={() => setCategory(c.id)}
+                  >
+                    {c.label}
+                  </CategoryTab>
+                ))}
+              </div>
+
+              <div className="flex flex-col gap-2 sm:flex-row">
               <div className="relative min-w-0 flex-1">
                 <label htmlFor={queryId} className="sr-only">
                   Search by model, brand, or CC
@@ -127,6 +188,7 @@ export function Hero() {
               >
                 Explore vehicles
               </Button>
+              </div>
             </form>
 
             <ul
@@ -154,30 +216,11 @@ export function Hero() {
           </div>
         </div>
 
-        <nav
-          aria-label="Vehicle categories"
-          className="mt-14 border-t border-charcoal-1 pt-4 md:mt-20"
-        >
-          <ul className="-mx-1 flex snap-x gap-1 overflow-x-auto pb-4">
-            {CATEGORIES.map((category) => (
-              <li key={category.id} className="snap-start">
-                <Link
-                  href={`/search?category=${category.id}`}
-                  className="flex min-w-[7.5rem] flex-col gap-1 rounded-[var(--radius-sm)] border border-transparent px-3 py-2.5 transition-colors duration-[var(--duration-short)] ease-[var(--ease-base)] hover:border-charcoal-2 hover:bg-obsidian-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime"
-                >
-                  <span className="font-heading text-sm font-medium text-pearl">
-                    {category.label}
-                  </span>
-                  <span className="text-xs text-pearl-muted">
-                    {category.track === "ride-drive"
-                      ? "Ride & Drive"
-                      : "Heavy & Farm"}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* The standalone category rail that used to sit here was folded
+            into the search widget above on 2026-09-21. Its seven
+            destinations survive as crawlable links in the footer's
+            long-tail section, so nothing was lost to search engines. */}
+        <div className="h-16 md:h-24" aria-hidden="true" />
       </div>
     </section>
   );

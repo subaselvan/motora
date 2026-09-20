@@ -268,7 +268,7 @@ export function HeroTrustRing() {
       {/* CRED's walled-garden framing: lead with what the next tier opens,
           not with what is currently withheld. */}
       {NEXT_TIER && (
-        <div className="mt-5 flex items-center justify-center gap-2.5 rounded-[var(--radius-md)] border border-orange/30 bg-orange/[0.07] px-4 py-2.5">
+        <div className="mt-6 flex items-center justify-center gap-2.5 rounded-[var(--radius-md)] border border-orange/30 bg-orange/[0.07] px-4 py-2.5">
           <ArrowUpRight
             size={15}
             aria-hidden="true"

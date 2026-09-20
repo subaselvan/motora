@@ -59,7 +59,7 @@ export function Footer() {
           className="h-14 w-14"
         />
 
-        <div className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-4">
+        <div className="mt-12 grid grid-cols-2 gap-8 sm:grid-cols-4">
           {Object.entries(footerLinks).map(([heading, links]) => (
             <div key={heading}>
               <h3 className="font-heading text-sm font-medium text-pearl">{heading}</h3>
@@ -79,7 +79,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-charcoal-1 pt-6 sm:flex-row sm:items-center">
+        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-charcoal-1 pt-6 sm:flex-row sm:items-center">
           <p className="text-xs text-pearl-muted">
             © {new Date().getFullYear()} MOTORA. All rights reserved.
           </p>
@@ -95,7 +95,7 @@ export function Footer() {
           aria-label="Rentals by city"
           className="mt-8 border-t border-charcoal-1 pt-6"
         >
-          <div className="grid gap-x-8 gap-y-5 text-xs sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-x-8 gap-y-6 text-xs sm:grid-cols-2 lg:grid-cols-5">
             {LONG_TAIL.map(({ city, categories }) => (
               <div key={city}>
                 <p className="font-medium text-pearl-dim">{city}</p>

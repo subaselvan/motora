@@ -16,7 +16,7 @@ export function HostCta() {
   return (
     <section aria-labelledby="host-cta-heading" className="border-t border-charcoal-1">
       <div className="mx-auto max-w-7xl px-4 md:px-6" style={{ paddingBlock: "var(--section-y)" }}>
-        <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-12">
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-12">
           <div className="lg:col-span-6">
             <SectionIntro
               index="04"
@@ -25,7 +25,7 @@ export function HostCta() {
               heading="Your vehicle is idle most of the week"
               lede="List it and it earns while you are not using it. You set the price, the availability, and who gets approved. Every renter arrives with a trust record you can read before you accept."
             />
-            <div className="mt-7 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Button variant="primary" size="lg" asChild>
                 <Link href="/host-landing">List your vehicle</Link>
               </Button>
@@ -37,14 +37,14 @@ export function HostCta() {
 
           <div className="lg:col-span-6">
             <div className="overflow-hidden rounded-[var(--radius-md)] border border-charcoal-1">
-              <p className="border-b border-charcoal-1 bg-obsidian-light px-5 py-3 text-xs text-pearl-muted">
+              <p className="border-b border-charcoal-1 bg-obsidian-light px-6 py-3 text-xs text-pearl-muted">
                 Illustrative monthly earnings at 40% utilisation
               </p>
               <dl className="divide-y divide-charcoal-1">
                 {EARNINGS.map(([vehicle, amount]) => (
                   <div
                     key={vehicle}
-                    className="flex items-baseline justify-between px-5 py-3.5"
+                    className="flex items-baseline justify-between px-6 py-3.5"
                   >
                     <dt className="text-sm text-pearl-dim">{vehicle}</dt>
                     <dd>

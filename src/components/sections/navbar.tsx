@@ -51,7 +51,7 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-8 md:flex" aria-label="Primary">
           {primaryLinks.map((link) => (
             <Link
               key={link.href}
