@@ -112,32 +112,78 @@ void main() {
   float bd = length(p - bouncePos);
   float bounce = 1.0 / (1.0 + 34.0 * bd * bd);
 
-  // ── Neon texture ──────────────────────────────────────────────────
-  // Each octave is displaced by the one before it: flowing ribbons, not
-  // static cloud. The field slides with scroll (its own parallax rate)
-  // and drifts slowly on its own.
+  // ── Layered wave field ────────────────────────────────────────────
+  // Three sheets at different depths rather than one flat ribbon field.
+  // Each is the same domain-warped noise sampled at its own scale, speed
+  // and parallax rate, which is what produces actual depth: the near
+  // sheet slides past the far one instead of the whole texture moving as
+  // a single plane.
   vec2 rp = p * 1.15 + vec2(0.0, uProgress * 0.9);
   float rt = uTime * 0.09;
-  float n1 = snoise(rp * 1.4 + rt);
-  float n2 = snoise(rp * 2.3 - rt * 0.8 + n1 * 0.9);
-  float n3 = snoise(rp * 0.8 + n2 * 0.85);
-  float ribbon = pow(smoothstep(0.22, 0.95, n3), 1.6);
 
-  // Ribbons are haze the light passes through, so they are brightest
-  // near the source and never brighter than it. Away from the source
-  // they keep a low floor, which is what gives the far side of the frame
-  // texture without giving it colour.
+  float h = 0.0;        // accumulated height field
+  float nearBand = 0.0; // the nearest sheet alone, for specular
+  for (int i = 0; i < 3; i++) {
+    float fi = float(i);
+    // Nearer sheets are larger on screen and travel further with scroll.
+    float scale = 1.5 - fi * 0.36;
+    float depth = 1.0 - fi * 0.3;
+    vec2 q = rp * scale + vec2(fi * 1.7, uProgress * fi * 0.5);
+
+    float a = snoise(q * 1.4 + rt * (1.0 + fi * 0.35));
+    float b = snoise(q * 2.3 - rt * 0.8 + a * 0.9);
+    float c = snoise(q * 0.8 + b * 0.85);
+
+    float sheet = pow(smoothstep(0.18, 0.95, c), 1.5) * depth;
+    h += sheet;
+    if (i == 0) nearBand = sheet;
+  }
+  h /= 1.9;
+
+  // Normal from the height field by central difference. This is what
+  // makes the waves read as rounded volumes catching light rather than
+  // as flat painted shapes — the single change that reads as "3D".
+  float e = 0.012;
+  float hx = snoise((rp + vec2(e, 0.0)) * 2.1 + rt) -
+             snoise((rp - vec2(e, 0.0)) * 2.1 + rt);
+  float hy = snoise((rp + vec2(0.0, e)) * 2.1 + rt) -
+             snoise((rp - vec2(0.0, e)) * 2.1 + rt);
+  vec3 nrm = normalize(vec3(-hx * 1.6, -hy * 1.6, 0.85));
+
+  // Light arrives from the source, so the shading agrees with where the
+  // page's glow actually is instead of an invented light direction.
+  vec3 ldir = normalize(vec3(src - p, 0.55));
+  float diffuse = max(0.0, dot(nrm, ldir));
+
+  // Blinn-Phong specular on the nearest sheet only. Confining it to one
+  // layer keeps the highlight reading as a crest rather than frosting
+  // the entire field.
+  vec3 viewDir = vec3(0.0, 0.0, 1.0);
+  vec3 halfV = normalize(ldir + viewDir);
+  float spec = pow(max(0.0, dot(nrm, halfV)), 26.0) * nearBand;
+
+  // Rim: grazing angles brighten, which is what gives a wave a visible
+  // edge and stops the sheets merging into one mass.
+  float rim = pow(1.0 - max(0.0, dot(nrm, viewDir)), 2.6);
+
   float lit = 0.3 + 0.7 * clamp(fall * 3.2, 0.0, 1.0);
-  float ribbonLit = ribbon * lit;
+  float ribbonLit = h * lit * (0.55 + 0.75 * diffuse);
 
   // ── Composite ─────────────────────────────────────────────────────
   vec3 ground = vec3(0.043, 0.043, 0.051);
   vec3 color = ground;
 
-  // Shadow side of the ribbons: a whisper of cool dark green so the
+  // Shadow side of the waves: a whisper of cool dark green so the
   // texture reads in the unlit regions as tone, not just as lime.
-  color += vec3(0.018, 0.044, 0.02) * ribbon * 0.6;
+  color += vec3(0.018, 0.044, 0.02) * h * 0.6;
   color += uLight * ribbonLit * uTexture;
+
+  // Rim and specular are gated by proximity to the source: a highlight
+  // in a region with no light reaching it would be a lie about the
+  // geometry, and it is the thing that makes cheap shader work look
+  // pasted on.
+  color += uLight * rim * lit * uTexture * 0.5;
+  color += mix(uLight, vec3(1.0), 0.45) * spec * lit * 0.85;
 
   color += uLight * scatter * uExposure;
   color += uBounce * bounce * uExposure * 0.13;

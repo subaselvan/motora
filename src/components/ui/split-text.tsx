@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef } from "react";
 
 /**
  * Staggered text reveal — our own splitter rather than GSAP's paid
@@ -72,15 +72,21 @@ export function SplitText({
           // The mask: each word rides up out of an overflow-hidden box,
           // so it appears to emerge from behind the line above rather
           // than simply fading in place.
-          <span key={`${word}-${i}`} className="split-word">
-            <span
-              className="split-word-inner"
-              style={{ transitionDelay: `${delay + i * stagger}ms` }}
-            >
-              {word}
+          //
+          // The separating space is a sibling of the mask, never inside
+          // it — overflow:hidden clips a trailing space, which silently
+          // welds every word to the next one ("Rentanything").
+          <Fragment key={`${word}-${i}`}>
+            <span className="split-word">
+              <span
+                className="split-word-inner"
+                style={{ transitionDelay: `${delay + i * stagger}ms` }}
+              >
+                {word}
+              </span>
             </span>
-            {i < words.length - 1 ? " " : ""}
-          </span>
+            {i < words.length - 1 ? " " : null}
+          </Fragment>
         ))}
       </span>
     </Tag>
