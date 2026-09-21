@@ -1,5 +1,6 @@
 import { AmbientBackdrop } from "@/components/ambient-backdrop";
 import { RevealDriver } from "@/components/reveal-driver";
+import { SmoothScroll } from "@/components/smooth-scroll";
 import { Navbar } from "@/components/sections/navbar";
 import { Hero } from "@/components/sections/hero";
 import { ScaleLine } from "@/components/sections/scale-line";
@@ -16,6 +17,7 @@ import { Footer } from "@/components/sections/footer";
 export default function Home() {
   return (
     <>
+      <SmoothScroll />
       <AmbientBackdrop />
       <RevealDriver />
       <Navbar />

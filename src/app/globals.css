@@ -564,6 +564,46 @@ a {
   .hero-blob-3 { transform: translate3d(-3%, -4%, 0) scale(1.04); }
 }
 
+/* ── Split text reveal ────────────────────────────────────────────────
+   Each word sits in an overflow-hidden box and rides up out of it, so it
+   emerges from behind the line above instead of fading in place. That
+   masked entrance is the thing that separates the reference sites'
+   typography from a plain fade.
+
+   inline-block on the mask because overflow only clips a block box, and
+   the vertical padding exists so descenders (g, y, p) are not sheared
+   off by the clip. The matching negative margin keeps the line-height
+   unchanged, so adding this to a heading never shifts layout. */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+  vertical-align: bottom;
+}
+
+.split-word-inner {
+  display: inline-block;
+  transform: translateY(105%);
+  opacity: 0;
+  transition:
+    transform var(--duration-long) var(--ease-out-soft),
+    opacity var(--duration-moderate) var(--ease-base);
+}
+
+.split-text[data-split-revealed] .split-word-inner {
+  transform: none;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .split-word-inner {
+    transform: none;
+    opacity: 1;
+    transition: none !important;
+  }
+}
+
 /* ── Product preview device frame ─────────────────────────────────────
    A device shell rather than a plain card, because the content inside is
    application UI and needs to read as a screen rather than as another

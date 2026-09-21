@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { HeroTrustRing } from "@/components/hero-trust-ring";
+import { SplitText } from "@/components/ui/split-text";
 import { CATEGORIES } from "@/lib/vehicles";
 
 /** Inline proof, not a card row. Each line is backed by something the product
@@ -95,16 +96,23 @@ export function Hero() {
               <Badge variant="outline-urgent">Seven categories</Badge>
             </div>
 
+            {/* Masked word reveal rather than the page's standard fade-up:
+                this is the one headline on the site that earns a bespoke
+                entrance, and it is the pattern every reference uses on its
+                own hero. The two lines are separate SplitText calls so the
+                second continues the stagger where the first ended, which a
+                single call containing a <br> could not express. */}
             <h1
               id="hero-heading"
-              data-reveal
-              data-reveal-delay="1"
               className="mt-6 font-heading font-bold leading-[1.03] tracking-[-0.03em] text-pearl"
               style={{ fontSize: "var(--text-display)" }}
             >
-              Rent anything
-              <br />
-              <span className="text-lime">that moves.</span>
+              <SplitText as="span" className="block">
+                Rent anything
+              </SplitText>
+              <SplitText as="span" className="block text-lime" delay={110}>
+                that moves.
+              </SplitText>
             </h1>
 
             <p
