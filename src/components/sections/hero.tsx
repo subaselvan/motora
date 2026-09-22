@@ -249,7 +249,7 @@ export function Hero() {
                   value={query}
                   onChange={setQuery}
                   onSelect={handleSuggestion}
-                  placeholder="Model, brand or city"
+                  placeholder="Model or brand"
                   inputClassName="h-12 pl-9 text-base"
                 />
               </div>

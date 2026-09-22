@@ -71,7 +71,7 @@ export function Navbar() {
             width={32}
             height={32}
             className="h-8 w-8 shrink-0"
-            priority
+            loading="eager"
           />
           <span className="font-heading text-xl font-bold tracking-[0.02em] text-pearl">
             MOTORA

@@ -60,7 +60,7 @@
   --radius-full: 9999px;
 
   /* Motion — Porsche Design System v3 scale, adopted verbatim 2026-09-18 from
-     docs/research (forensic teardown). Four tiers keyed to interaction intent
+     Porsche's published motion tokens. Four tiers keyed to interaction intent
      rather than arbitrary round numbers, on one base curve. Supersedes the
      180/240ms pair, which had no principle behind the split. */
   --ease-base: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -102,7 +102,7 @@
   --section-y: clamp(4.5rem, 7.5vw, 8.5rem);
 
   /* Elevation — ONE shared shadow tier (decided 2026-09-14, following the
-     Airbnb pattern in docs/research/DESIGN_INSPIRATION_SCAN.md; supersedes
+     Airbnb pattern, see docs/DECISIONS.md; supersedes
      the five-level ladder from the same day). Cards, focal panels and the
      search bar all share this single weight. Depth differences come from
      surface tone (sunken -> page -> light -> lighter) and border strength,
@@ -244,7 +244,7 @@ a {
 .stagger-4 { animation-delay: 280ms; }
 
 /* ── Ambient emission field ───────────────────────────────────────────
-   The governing rule, from docs/research (landing-page reference): the
+   The governing rule (docs/DESIGN-SYSTEM.md, "The one rule"): the
    accent is a LIGHT SOURCE, not a highlight colour. Lime must read as
    light arriving from somewhere — here, from behind the hero's trust
    ring — and falling off into obsidian. A flat decorative wash of acid
@@ -1000,7 +1000,13 @@ a {
    form rather than as part of it. */
 .combobox-list {
   position: absolute;
-  inset-inline: 0;
+  left: 0;
+  /* Wider than the input it hangs from. In the desktop hero the input is
+     ~210px, which cut every vehicle name to "Royal Enfi…"; the list now
+     reaches out over the city picker, as Cars24's and OLX's do. Capped to
+     the viewport so on a phone, where the input is already full width, it
+     never runs off the screen. */
+  width: max(100%, min(26rem, calc(100vw - 3rem)));
   top: calc(100% + 6px);
   z-index: 40;
   max-height: min(24rem, 60vh);

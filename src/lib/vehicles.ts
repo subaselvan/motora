@@ -1,6 +1,6 @@
-// Demo inventory. Authored at production fidelity, but not real listings —
-// see PRODUCT.md "Evidence on Hand". The comprehensive India-wide dataset is
-// queued work and deliberately not started here.
+// Demo inventory. Authored at production fidelity, but not real listings.
+// The comprehensive India-wide dataset is queued work (docs/ROADMAP.md) and
+// deliberately not started here.
 
 export type Track = "ride-drive" | "heavy-farm";
 
@@ -495,7 +495,7 @@ export const VEHICLES: Vehicle[] = [
 ];
 
 /** Homepage rails. Headlines follow the Turo pattern from
- *  docs/research/DESIGN_INSPIRATION_SCAN.md: qualifier + rental + in/near +
+ *  in docs/DECISIONS.md (design scan): qualifier + rental + in/near +
  *  place. Each doubles as the seed of a future geo landing page. */
 export const RAILS: {
   id: string;

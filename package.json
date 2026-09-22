@@ -1,7 +1,9 @@
 {
   "name": "motora",
   "version": "0.1.0",
+  "description": "MOTORA: a multi-category vehicle rental marketplace for India (investor demo).",
   "private": true,
+  "license": "UNLICENSED",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -5,6 +5,10 @@ node_modules
 .DS_Store
 tsconfig.tsbuildinfo
 
-# Review captures are regenerated each pass; the surface briefs are durable.
-.impeccable/review/
+# Local AI and design-tool state. Kept on disk for the tools that read it;
+# the working briefs are archived in the private motora-playbook repo.
+.impeccable/
+.claude/
+/PRODUCT.md
+/DESIGN.md
 .playwright-mcp/

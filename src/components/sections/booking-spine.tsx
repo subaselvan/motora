@@ -19,7 +19,7 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 /** The order is load-bearing: each step exists because the one before it
  *  established something. Rows name the failure they prevent, drawn from the
- *  cross-platform complaint patterns in RESEARCH_BRIEF.md. */
+ *  cross-platform complaint patterns in docs/DECISIONS.md#research-basis. */
 const STEPS: {
   title: string;
   detail: string;

@@ -1,5 +1,13 @@
 # MOTORA — Project Context for Claude Code
 
+> **Read first (added 2026-09-22):** the current, verified state of the project
+> lives in `AGENTS.md` (rules and traps for any AI assistant) and `docs/`
+> (architecture, algorithms, design system, decisions, roadmap). The product,
+> brand and structural decisions below still hold; where this file's token
+> values differ, `src/app/globals.css` and `docs/DESIGN-SYSTEM.md` are current.
+> The working briefs this file refers to moved to the private
+> `motora-playbook` repository.
+
 Multi-category vehicle rental platform (bikes, scooters, cars, EVs, trucks, JCBs, tractors) for the Indian market. Dual-sided marketplace: renters book vehicles hourly/daily; owners list vehicles to earn income.
 
 ## Working protocol (read this first)
@@ -8,12 +16,10 @@ Multi-category vehicle rental platform (bikes, scooters, cars, EVs, trucks, JCBs
 - Model guidance if this repo is ever used with model selection: Sonnet-class models at medium effort for UI/code/copy; reserve high-effort/Opus-class reasoning for genuine architecture tradeoffs, not routine implementation. For visual/design work specifically, Opus at *medium* effort — high effort tends to overcomplicate UI.
 - Before hand-writing something from scratch, check whether an available skill, MCP connector, or plugin fits the task (design/UI-generation skills, Figma connector, testing/deploy connectors). Say so if a missing one would have helped.
 
-## Reference docs (in repo root)
-- `RESEARCH_BRIEF.md` — distilled 10-platform competitive teardown. Read this for day-to-day building.
-- `DESIGN_SYSTEM.md` + `design-tokens.json` — colour/type/spacing/component direction. Direction, not mandate; `src/app/globals.css` is the source of truth for implemented tokens.
-- `BUILD_PROMPT.md` — original build kickoff brief.
-- `docs/research/DESIGN_INSPIRATION_SCAN.md` — live UI teardown of Turo, Zoomcar, United Rentals, Airbnb and CRED (2026-09-14). Caveats: it cites `competitive-research.md` and `decisions.md`, **neither exists in this repo** (do not fabricate them); and its "still-to-be-built hero visual" line is stale, since the 3D kart shipped in `1895614`.
-- Note: these describe themselves as direction rather than a locked spec. Where they conflict with this file, this file records the decision that was actually made and why.
+## Reference docs
+- In this repo: `docs/DECISIONS.md` (decisions, research basis, references studied), `docs/DESIGN-SYSTEM.md` (implemented tokens), `docs/ALGORITHMS.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`.
+- In the private `motora-playbook` repo (moved there 2026-09-22): `briefs/RESEARCH_BRIEF.md` (10-platform teardown), `briefs/BUILD_PROMPT.md` (original kickoff), `design/DESIGN_SYSTEM.md` + `design/design-tokens.json` (the early design direction), `research/DESIGN_INSPIRATION_SCAN.md` (Turo/Zoomcar/United Rentals/Airbnb/CRED teardown), and the source research PDFs.
+- Note: those briefs describe themselves as direction rather than a locked spec. Where they conflict with this file or `docs/DECISIONS.md`, the decision recorded here is the one that was actually made.
 
 ## Tech stack (locked)
 - Framework: Next.js (App Router)

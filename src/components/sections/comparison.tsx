@@ -4,7 +4,7 @@ import { SectionIntro } from "@/components/ui/section-intro";
 /**
  * The differentiation argument, stated as a comparison.
  *
- * Every row is a real complaint pattern from RESEARCH_BRIEF.md rather
+ * Every row is a real complaint pattern (docs/DECISIONS.md#research-basis) rather
  * than a strawman — these are the failures that actually recur across the
  * ten platforms studied, which is why the left column can be specific
  * instead of vague. No competitor is named: the point is the industry
