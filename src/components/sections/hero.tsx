@@ -68,12 +68,12 @@ export function Hero() {
 
   return (
     <section aria-labelledby="hero-heading" className="relative isolate">
-      {/* Legibility scrim for the copy column only. The page's light source
-          sits top-right behind the ring, so the left column is already the
-          dim side of the frame; this holds it there as the field breathes.
-          Scoped to md and up because the shader only mounts there — below
-          that the CSS field is already measured safe and scrimming it would
-          just dim the design for nothing. */}
+      {/* Legibility scrim for the copy. The page's light source sits behind
+          the ring (measured from it, see ambient-field.tsx), so the copy is
+          always on the dim side of the frame; this holds it there as the
+          field breathes. Scoped to md and up because the shader only mounts
+          there — below that the CSS field is already measured safe and
+          scrimming it would just dim the design for nothing. */}
       {/* Hero-only mesh, under the scrim at -z-6 so the scrim above still
           protects the copy column. The page's ambient field is unchanged
           everywhere else. */}
@@ -83,9 +83,18 @@ export function Hero() {
         <span className="hero-blob-3" />
       </div>
 
+      {/* Two orientations because the dark side of the frame moves with the
+          layout. From lg the hero is two columns, the ring and its light sit
+          right, and the copy is on the left: scrim left to right. Between md
+          and lg the hero stacks, the ring drops below the copy, and the copy
+          spans the full width: scrim top to bottom, clearing just under the
+          proof line (copy ends at ~47% of the hero's height there, the ring
+          begins at ~51%). The horizontal-only version left the right half of
+          the paragraph unscrimmed at tablet widths — measured at 900px, the
+          subcopy fell to 2.59:1 with the light already moved behind the ring. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-[5] hidden bg-[linear-gradient(to_right,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_42%,transparent_72%)] md:block"
+        className="pointer-events-none absolute inset-0 -z-[5] hidden md:block md:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_47%,transparent_60%)] lg:bg-[linear-gradient(to_right,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_42%,transparent_72%)]"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 pt-16 md:px-6 md:pt-24">

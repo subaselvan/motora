@@ -117,9 +117,21 @@ export function HeroTrustRing() {
         className="pointer-events-none absolute left-1/2 top-1/2 h-[108%] w-[108%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(198,255,61,0.13),rgba(198,255,61,0.035)_55%,transparent_78%)]"
       />
 
+      {/* data-light-anchor: the page's light source is measured from this
+          element, so it stays behind the ring at every breakpoint rather
+          than being pinned to where the ring sits on desktop.
+
+          --light-anchor is where on the ring, and it changes with layout
+          because the light belongs on the side facing away from the copy.
+          From lg the copy is to the left: 0.65/0.18, near the top of the
+          arc and right of centre, exactly where the light was art-directed
+          before it was anchored. Below lg the copy is above the ring, so the
+          light drops to the lower half — at the top of the arc it sat right
+          under the proof line and measured "Fees shown upfront" at 3.11:1. */}
       <svg
+        data-light-anchor
         viewBox={`0 0 ${SIZE} ${SIZE}`}
-        className="relative w-full"
+        className="relative w-full [--light-anchor:0.5_0.62] lg:[--light-anchor:0.65_0.18]"
         role="img"
         aria-label={`Sample trust record: ${DEMO_TRUST_SCORE} out of 100. Unlocked through goods vehicles.`}
       >
