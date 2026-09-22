@@ -3,8 +3,35 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Bookmark, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSavedSlugs } from "@/components/saved/use-saved";
+
+/** The shortlist's only entry point, so it stays visible at every width —
+ *  a count that only appears inside the mobile menu is a count nobody
+ *  sees. The badge renders only when there is something to report. */
+function SavedLink() {
+  const count = useSavedSlugs().length;
+  return (
+    <Link
+      href="/saved"
+      aria-label={
+        count > 0 ? `Saved vehicles, ${count} saved` : "Saved vehicles"
+      }
+      className="relative flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] text-pearl-dim transition-colors duration-[var(--duration-short)] hover:bg-obsidian-lighter hover:text-pearl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime"
+    >
+      <Bookmark size={17} aria-hidden="true" />
+      {count > 0 && (
+        <span
+          aria-hidden="true"
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-lime px-1 font-body text-[0.625rem] font-semibold tabular-nums text-lime-ink"
+        >
+          {count}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 const primaryLinks = [
   { href: "/search?track=ride-drive", label: "Ride & Drive" },
@@ -64,6 +91,7 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2 md:gap-3">
+          <SavedLink />
           <div className="hidden items-center gap-3 md:flex">
             <Button variant="ghost" size="sm" asChild>
               <Link href="/login">Log in</Link>

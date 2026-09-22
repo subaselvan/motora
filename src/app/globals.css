@@ -853,6 +853,114 @@ a {
   }
 }
 
+/* ── Compare table ────────────────────────────────────────────────────
+   A real <table>: the data is genuinely two-dimensional, and scope="col" /
+   scope="row" let a screen reader announce "Per day, Royal Enfield Classic
+   350, ₹899" instead of a bare number. A grid of divs cannot say that.
+
+   The label column is sticky, so scrolling to the fifth vehicle does not
+   leave you looking at a column of numbers with no idea what they measure. */
+.compare-scroll {
+  overflow-x: auto;
+  /* Bleeds to the viewport edge on small screens so the scroll affordance
+     is obvious, while the table's own padding keeps the text aligned with
+     the page column. */
+  margin-inline: calc(var(--space-4) * -1);
+  padding-inline: var(--space-4);
+  scrollbar-width: thin;
+}
+
+.compare-scroll:focus-visible {
+  outline: 2px solid var(--color-lime);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.compare-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+  font-size: 0.8125rem;
+}
+
+.compare-table th,
+.compare-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-charcoal-1);
+}
+
+.compare-table thead th {
+  border-bottom: 1px solid var(--color-charcoal-2);
+  padding-block: var(--space-4);
+  min-width: 11rem;
+}
+
+/* The row-label column. Sticky needs an opaque background of its own or
+   the scrolling cells show through it. */
+.compare-table tbody th,
+.compare-table .compare-corner {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--color-obsidian);
+  color: var(--color-pearl-muted);
+  font-weight: 400;
+  white-space: nowrap;
+  min-width: 9.5rem;
+  /* Hairline on the right edge, drawn with a shadow so it does not add a
+     pixel of width and push the columns out of alignment. */
+  box-shadow: 1px 0 0 0 var(--color-charcoal-1);
+}
+
+.compare-table tbody td {
+  color: var(--color-pearl-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The winning cell in a row. Lime because that is already the page's
+   "this is the good number" colour, on the same well treatment the rest of
+   the site uses for a raised value. */
+.compare-table tbody td[data-best] {
+  color: var(--color-lime);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--color-lime) 7%, transparent);
+}
+
+.compare-table tbody tr:last-child th,
+.compare-table tbody tr:last-child td {
+  border-bottom: none;
+  padding-block: var(--space-4);
+}
+
+/* ── Shortlist toggle ─────────────────────────────────────────────────
+   One overshoot on save. Confirmation of a state change that has no other
+   feedback — nothing navigates, nothing loads — so the control has to say
+   so itself. */
+@keyframes save-pulse {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.28);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.save-pulse {
+  animation: save-pulse var(--duration-moderate) var(--ease-base);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .save-pulse {
+    animation: none;
+  }
+}
+
 /* ── Mobile filter disclosure ─────────────────────────────────────────
    <details> rather than a drawer. A drawer needs a focus trap, a scroll
    lock and an Escape handler to be correct; this is all three by default

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Lock, MapPin, ShieldCheck, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SaveButton } from "@/components/saved/save-button";
 import {
   formatINR,
   LICENCE_LABEL,
@@ -166,10 +167,20 @@ function RideDriveCard({
           scrollers, where blur costs a repaint per frame and has nothing behind
           it to blur anyway. */}
       <div className="relative flex flex-1 flex-col gap-3 bg-[color-mix(in_srgb,var(--color-obsidian-light)_82%,transparent)] p-4">
-        <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
-          <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
-          {vehicle.model}
-        </h3>
+        {/* The shortlist toggle sits beside the title on both templates
+            rather than over the media. Heavy & Farm cards have no media
+            area at all, and putting it in the one place both layouts
+            share means a renter learns its position once. */}
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
+            <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
+            {vehicle.model}
+          </h3>
+          <SaveButton
+            slug={vehicle.slug}
+            name={`${vehicle.brand} ${vehicle.model}`}
+          />
+        </div>
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-pearl-dim">
           <span className="inline-flex items-center gap-1">
@@ -267,10 +278,16 @@ function HeavyFarmCard({
       </div>
 
       <div className="relative flex flex-1 flex-col gap-3 bg-[color-mix(in_srgb,var(--color-obsidian-light)_82%,transparent)] p-4">
-        <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
-          <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
-          {vehicle.model}
-        </h3>
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="font-heading text-lg font-semibold leading-snug text-pearl">
+            <span className="font-medium text-pearl-dim">{vehicle.brand} </span>
+            {vehicle.model}
+          </h3>
+          <SaveButton
+            slug={vehicle.slug}
+            name={`${vehicle.brand} ${vehicle.model}`}
+          />
+        </div>
 
         <div className="flex flex-wrap gap-1.5">
           <Badge variant="outline-urgent">Heavy equipment</Badge>
