@@ -1,3 +1,4 @@
+import { expandQuery } from "@/lib/suggest";
 import {
   isAvailable,
   parseWindow,
@@ -219,8 +220,12 @@ function matches(
     return false;
   if (query.verifiedOnly && !isVerified(vehicle)) return false;
   if (query.unlockedOnly && isLocked(vehicle, trustScore)) return false;
-  if (query.q && !haystack(vehicle).includes(query.q.toLowerCase()))
-    return false;
+  // Through the same synonym expansion the type-ahead uses, so "scooty"
+  // or "bangalore" finds here exactly what the suggestion promised.
+  if (query.q) {
+    const text = haystack(vehicle);
+    if (!expandQuery(query.q).some((term) => text.includes(term))) return false;
+  }
   // Last: the only clause that does per-day work.
   if (query.when.state === "valid" && !isAvailable(vehicle, query.when.window))
     return false;

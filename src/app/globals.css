@@ -994,6 +994,48 @@ a {
   }
 }
 
+/* ── Search type-ahead ────────────────────────────────────────────────
+   The suggestion list. Lighter surface than the sunken input it hangs
+   from, on the page's one shadow tier, so it reads as floating over the
+   form rather than as part of it. */
+.combobox-list {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(100% + 6px);
+  z-index: 40;
+  max-height: min(24rem, 60vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--color-charcoal-2);
+  border-radius: var(--radius-md);
+  background: var(--color-obsidian-light);
+  box-shadow: var(--elev);
+  padding-bottom: 0;
+}
+
+.combobox-list[hidden] {
+  display: none;
+}
+
+.combobox-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-inline: var(--space-1);
+  padding: 9px var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  color: var(--color-pearl);
+  cursor: pointer;
+}
+
+/* One highlight for both mouse and keyboard, driven by the same
+   data-active, so the two can never show different rows as current. */
+.combobox-option[data-active] {
+  background: var(--color-obsidian-lighter);
+  box-shadow: inset 2px 0 0 var(--color-lime);
+}
+
 /* ── Scrolling chip rows ──────────────────────────────────────────────
    Horizontal rows that scroll by swipe or trackpad. The scrollbar is
    hidden because the row signals overflow itself (a clipped chip under an

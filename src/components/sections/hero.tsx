@@ -2,13 +2,14 @@
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Camera, MapPin, ReceiptText, Search, ShieldCheck } from "lucide-react";
+import { Camera, MapPin, ReceiptText, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { HeroTrustRing } from "@/components/hero-trust-ring";
 import { SplitText } from "@/components/ui/split-text";
 import { TripWindowFields } from "@/components/search/trip-window-fields";
+import { SearchCombobox } from "@/components/search/search-combobox";
+import { pushRecent, type Suggestion } from "@/lib/suggest";
 import { CATEGORIES, INVENTORY_CITIES } from "@/lib/vehicles";
 
 /** Inline proof, not a card row. Each line is backed by something the product
@@ -56,13 +57,17 @@ export function Hero() {
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState<string | null>(null);
   const [trip, setTrip] = useState({ from: "", to: "" });
-  const queryId = useId();
   const locationId = useId();
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function tripParams() {
+    return trip.from && trip.to
+      ? new URLSearchParams({ from: trip.from, to: trip.to }).toString()
+      : "";
+  }
+
+  function go(q: string) {
     const params = new URLSearchParams();
-    if (query) params.set("q", query);
+    if (q) params.set("q", q);
     if (location) params.set("city", location);
     if (category) params.set("category", category);
     // Dates are optional here: browsing without them is a supported path.
@@ -72,7 +77,44 @@ export function Hero() {
       params.set("from", trip.from);
       params.set("to", trip.to);
     }
+    pushRecent(q);
     router.push(`/search${params.toString() ? `?${params}` : ""}`);
+  }
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    go(query);
+  }
+
+  /** What each kind of suggestion does, following the reference sites:
+   *  a category or city narrows the form rather than searching at once
+   *  (the renter may still be choosing dates), a specific vehicle goes
+   *  straight to its page like a Cars24 model hit, and a recent search
+   *  re-runs immediately as it does on OLX. */
+  function handleSuggestion(item: Suggestion) {
+    switch (item.kind) {
+      case "category":
+        setCategory(item.id);
+        setQuery("");
+        break;
+      case "city":
+        setLocation(item.label);
+        setQuery("");
+        break;
+      case "brand":
+        setQuery(item.label);
+        break;
+      case "recent":
+        setQuery(item.label);
+        go(item.label);
+        break;
+      case "model":
+      case "popular": {
+        const qs = tripParams();
+        router.push(`/vehicle/${item.slug}${qs ? `?${qs}` : ""}`);
+        break;
+      }
+    }
   }
 
   return (
@@ -202,21 +244,13 @@ export function Hero() {
               </div>
 
               <div className="flex flex-col gap-2 sm:flex-row">
-              <div className="relative min-w-0 flex-1">
-                <label htmlFor={queryId} className="sr-only">
-                  Search by model, brand, or CC
-                </label>
-                <Search
-                  size={16}
-                  aria-hidden="true"
-                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-pearl-muted"
-                />
-                <Input
-                  id={queryId}
+              <div className="min-w-0 flex-1">
+                <SearchCombobox
                   value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Model or brand"
-                  className="h-12 pl-9 text-base"
+                  onChange={setQuery}
+                  onSelect={handleSuggestion}
+                  placeholder="Model, brand or city"
+                  inputClassName="h-12 pl-9 text-base"
                 />
               </div>
 
