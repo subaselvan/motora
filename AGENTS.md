@@ -93,6 +93,17 @@ npm run build          # must pass before any commit
 | ScrollTrigger on `documentElement` | Its box is the viewport, so start and end coincide | Trigger on `document.body` |
 | Demo availability by independent days | Long trips found almost nothing | Bookings in multi-day blocks |
 
+## Deploying
+
+Render service `motora-preview` builds every push to `main`
+(`npm install && npm run build`, then `npm start`). **Render clones this
+repository anonymously: it has no GitHub App access.** While the repo is
+public that works; if it is made private, every deploy fails at the clone
+step and the live site silently stays on the last good build (this happened
+on 2026-09-22: two commits never went live). To make the repo private safely,
+first connect Render's GitHub App to it in the Render dashboard. After a
+push, confirm the deploy reached `live`, not just that the push succeeded.
+
 ## Verifying in a browser
 
 - Real interactions matter. Some embedded preview browsers don't deliver
