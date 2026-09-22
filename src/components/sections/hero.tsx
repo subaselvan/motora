@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { HeroTrustRing } from "@/components/hero-trust-ring";
 import { SplitText } from "@/components/ui/split-text";
-import { CATEGORIES } from "@/lib/vehicles";
+import { TripWindowFields } from "@/components/search/trip-window-fields";
+import { CATEGORIES, INVENTORY_CITIES } from "@/lib/vehicles";
 
 /** Inline proof, not a card row. Each line is backed by something the product
  *  actually does: a data field (verified / rtoRegistered) or a step in the
@@ -54,6 +55,7 @@ export function Hero() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState<string | null>(null);
+  const [trip, setTrip] = useState({ from: "", to: "" });
   const queryId = useId();
   const locationId = useId();
 
@@ -63,6 +65,13 @@ export function Hero() {
     if (query) params.set("q", query);
     if (location) params.set("city", location);
     if (category) params.set("category", category);
+    // Dates are optional here: browsing without them is a supported path.
+    // The results page validates the window and says why if it cannot be
+    // booked, so a bad window never silently becomes "everything".
+    if (trip.from && trip.to) {
+      params.set("from", trip.from);
+      params.set("to", trip.to);
+    }
     router.push(`/search${params.toString() ? `?${params}` : ""}`);
   }
 
@@ -83,23 +92,42 @@ export function Hero() {
         <span className="hero-blob-3" />
       </div>
 
-      {/* Two orientations because the dark side of the frame moves with the
-          layout. From lg the hero is two columns, the ring and its light sit
-          right, and the copy is on the left: scrim left to right. Between md
-          and lg the hero stacks, the ring drops below the copy, and the copy
-          spans the full width: scrim top to bottom, clearing just under the
-          proof line (copy ends at ~47% of the hero's height there, the ring
-          begins at ~51%). The horizontal-only version left the right half of
-          the paragraph unscrimmed at tablet widths — measured at 900px, the
-          subcopy fell to 2.59:1 with the light already moved behind the ring. */}
+      {/* Desktop scrim, left to right: from lg the ring and its light sit
+          right and the copy left. Between md and lg the hero stacks and the
+          copy spans the full width, so that case is handled by a scrim on
+          the copy column itself (below) rather than by stops on this one —
+          percentage stops here only fitted one copy height, and adding the
+          trip dates to the search moved the copy's end from 47% to 52% of
+          the hero and left the proof line under-covered. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-[5] hidden md:block md:bg-[linear-gradient(to_bottom,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_47%,transparent_60%)] lg:bg-[linear-gradient(to_right,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_42%,transparent_72%)]"
+        className="pointer-events-none absolute inset-0 -z-[5] hidden bg-[linear-gradient(to_right,color-mix(in_srgb,var(--color-obsidian-sunken)_80%,transparent)_0%,color-mix(in_srgb,var(--color-obsidian-sunken)_62%,transparent)_42%,transparent_72%)] lg:block"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 pt-16 md:px-6 md:pt-24">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-6">
+        {/* grid-cols-1, not an implicit column. An implicit track is sized
+            `auto`, which grows to its widest child's min-content — and the
+            category tab row, although it scrolls, reports its full 530px of
+            tabs as min-content. At 375px that pushed the page to 555px wide
+            and the tabs never scrolled; the page did. grid-cols-1 is
+            minmax(0, 1fr), which cannot be pushed past the viewport, so the
+            row's own overflow-x takes over as intended. */}
+        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-12">
+          <div className="relative lg:col-span-6">
+            {/* Tablet scrim (md to lg), sized by the copy column itself so
+                it covers exactly the copy whatever the copy's height. Its
+                -z-[5] resolves in the section's isolated stacking context,
+                the same layer as the desktop scrim: above the hero mesh,
+                below the text. Feathered top and bottom so it reads as the
+                frame dimming, not as a panel. The feathers are fixed pixel
+                lengths, not percentages: a percentage fade scales with the
+                copy's height and at 14% it swallowed the proof line. The
+                fade-out sits in the 48px gap above the ring, which keeps
+                its light. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-x-6 -bottom-12 -top-10 -z-[5] hidden bg-[color-mix(in_srgb,var(--color-obsidian-sunken)_74%,transparent)] [mask-image:linear-gradient(to_bottom,transparent,black_40px,black_calc(100%_-_44px),transparent)] md:block lg:hidden"
+            />
             <div data-reveal className="flex flex-wrap gap-2">
               <Badge variant="outline-trust">Self-drive</Badge>
               <Badge variant="outline-urgent">Seven categories</Badge>
@@ -150,7 +178,11 @@ export function Hero() {
               <div
                 role="group"
                 aria-label="Filter by category"
-                className="-mx-1 mb-2 flex gap-1 overflow-x-auto border-b border-charcoal-1 px-1 pb-2"
+                // Below lg the tabs overflow and scroll. The bar is hidden
+                // and the right edge fades instead (Airbnb's category bar):
+                // a clipped tab under a fade says "more this way" without a
+                // 10px scrollbar strip. From lg every tab fits, so no fade.
+                className="scroll-row -mx-1 mb-2 flex gap-1 overflow-x-auto border-b border-charcoal-1 px-1 pb-2 max-lg:[mask-image:linear-gradient(to_right,black_calc(100%_-_32px),transparent)]"
               >
                 <CategoryTab
                   active={category === null}
@@ -188,22 +220,32 @@ export function Hero() {
                 />
               </div>
 
+              {/* A picker, not free text. The fleet is in five cities; a
+                  text box invites "Bangalore" against "Bengaluru" and a
+                  confident search that returns nothing. Listing the real
+                  cities is also the honest statement of coverage. */}
               <div className="relative min-w-0 flex-1 sm:max-w-[11rem]">
                 <label htmlFor={locationId} className="sr-only">
-                  Location
+                  City
                 </label>
                 <MapPin
                   size={16}
                   aria-hidden="true"
-                  className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-pearl-muted"
+                  className="pointer-events-none absolute left-3 top-1/2 z-[1] -translate-y-1/2 text-pearl-muted"
                 />
-                <Input
+                <select
                   id={locationId}
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Location"
-                  className="h-12 pl-9 text-base"
-                />
+                  className="field-select h-12 w-full pl-9 text-base"
+                >
+                  <option value="">Any city</option>
+                  {INVENTORY_CITIES.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <Button
@@ -214,6 +256,14 @@ export function Hero() {
               >
                 Explore vehicles
               </Button>
+              </div>
+
+              <div className="mt-2 border-t border-charcoal-1 px-1 pb-1 pt-3">
+                <TripWindowFields
+                  from={trip.from}
+                  to={trip.to}
+                  onChange={(from, to) => setTrip({ from, to })}
+                />
               </div>
             </form>
 

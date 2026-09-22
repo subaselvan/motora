@@ -3,6 +3,7 @@ import { Lock, MapPin, ShieldCheck, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SaveButton } from "@/components/saved/save-button";
+import type { Quote } from "@/lib/rental";
 import {
   formatINR,
   LICENCE_LABEL,
@@ -12,8 +13,14 @@ import {
 } from "@/lib/vehicles";
 
 /** Turo pattern: show the multi-day total beside the daily rate so nobody
- *  does arithmetic, and nothing new appears at checkout. */
+ *  does arithmetic, and nothing new appears at checkout. Used only when the
+ *  renter has not given dates; with dates, the card shows their trip. */
 const QUOTE_DAYS = 3;
+
+/** The renter's trip, when search has one. `params` is the window as a
+ *  query string, carried on to the vehicle page so booking never asks for
+ *  the dates a second time. */
+export type CardTrip = { quote: Quote; params: string };
 
 /**
  * Two templates, not one with a flag: Ride & Drive sells the object,
@@ -23,17 +30,23 @@ const QUOTE_DAYS = 3;
 export function VehicleCard({
   vehicle,
   trustScore,
+  trip,
 }: {
   vehicle: Vehicle;
   trustScore: number;
+  trip?: CardTrip;
 }) {
   const locked = trustScore < vehicle.minTrustScore;
 
   return vehicle.track === "ride-drive" ? (
-    <RideDriveCard vehicle={vehicle} locked={locked} />
+    <RideDriveCard vehicle={vehicle} locked={locked} trip={trip} />
   ) : (
-    <HeavyFarmCard vehicle={vehicle} locked={locked} />
+    <HeavyFarmCard vehicle={vehicle} locked={locked} trip={trip} />
   );
+}
+
+function vehicleHref(slug: string, trip?: CardTrip) {
+  return trip ? `/vehicle/${slug}?${trip.params}` : `/vehicle/${slug}`;
 }
 
 function CardShell({
@@ -78,11 +91,11 @@ function CardShell({
 
 /** `disabled` does nothing on an anchor, so a locked CTA must not be one. */
 function BookCta({
-  slug,
+  href,
   locked,
   className,
 }: {
-  slug: string;
+  href: string;
   locked: boolean;
   className?: string;
 }) {
@@ -105,8 +118,35 @@ function BookCta({
   }
   return (
     <Button variant="primary" size="sm" className={className} asChild>
-      <Link href={`/vehicle/${slug}`}>Book now</Link>
+      <Link href={href}>Book now</Link>
     </Button>
+  );
+}
+
+/** The second price line. With a trip it is the trip — the lime figure,
+ *  because it is the number the renter will actually pay; without one it
+ *  is the fixed multi-day example in muted type. */
+function TripLine({ vehicle, trip }: { vehicle: Vehicle; trip?: CardTrip }) {
+  if (!trip) {
+    return (
+      <p data-figure className="mt-0.5 text-xs text-pearl-muted">
+        {formatINR(vehicle.perDay * QUOTE_DAYS)} for {QUOTE_DAYS} days
+      </p>
+    );
+  }
+  return (
+    <p data-figure className="mt-0.5 text-xs text-pearl-dim">
+      {/* Heavy cards show two day rates, so the trip line names which one
+          it is built on. Leading rather than trailing: "for 9 days ·
+          weekly rate self-drive" read as one run-on qualifier. */}
+      {vehicle.track === "heavy-farm" && (
+        <span className="text-pearl-muted">Self-drive </span>
+      )}
+      <span className="font-semibold text-lime">
+        {formatINR(trip.quote.total)}
+      </span>{" "}
+      {trip.quote.label}
+    </p>
   );
 }
 
@@ -124,9 +164,11 @@ function LockedNote({ required }: { required: number }) {
 function RideDriveCard({
   vehicle,
   locked,
+  trip,
 }: {
   vehicle: RideDriveVehicle;
   locked: boolean;
+  trip?: CardTrip;
 }) {
   const { specs } = vehicle;
 
@@ -210,11 +252,9 @@ function RideDriveCard({
                 /day
               </span>
             </p>
-            <p data-figure className="mt-0.5 text-xs text-pearl-muted">
-              {formatINR(vehicle.perDay * QUOTE_DAYS)} for {QUOTE_DAYS} days
-            </p>
+            <TripLine vehicle={vehicle} trip={trip} />
           </div>
-          <BookCta slug={vehicle.slug} locked={locked} />
+          <BookCta href={vehicleHref(vehicle.slug, trip)} locked={locked} />
         </div>
       </div>
 
@@ -228,9 +268,11 @@ function RideDriveCard({
 function HeavyFarmCard({
   vehicle,
   locked,
+  trip,
 }: {
   vehicle: HeavyFarmVehicle;
   locked: boolean;
+  trip?: CardTrip;
 }) {
   const { specs } = vehicle;
 
@@ -332,7 +374,13 @@ function HeavyFarmCard({
           </div>
         </dl>
 
-        <BookCta slug={vehicle.slug} locked={locked} className="w-full" />
+        {trip && <TripLine vehicle={vehicle} trip={trip} />}
+
+        <BookCta
+          href={vehicleHref(vehicle.slug, trip)}
+          locked={locked}
+          className="w-full"
+        />
       </div>
 
       {locked && <LockedNote required={vehicle.minTrustScore} />}

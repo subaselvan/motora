@@ -16,8 +16,15 @@ import {
   computeFacets,
   isEmptyQuery,
   parseSearchQuery,
+  quotesFor,
   searchVehicles,
 } from "@/lib/search";
+import {
+  PRICING,
+  WINDOW_PROBLEM_TEXT,
+  formatDuration,
+  formatWall,
+} from "@/lib/rental";
 import { DEMO_TRUST_SCORE } from "@/lib/vehicles";
 
 export const metadata: Metadata = {
@@ -44,6 +51,13 @@ export default async function SearchPage({
   const query = parseSearchQuery(await searchParams);
   const results = searchVehicles(query, DEMO_TRUST_SCORE);
   const facets = computeFacets(query, DEMO_TRUST_SCORE);
+  const quotes = quotesFor(query);
+  const when = query.when;
+  // The window, re-encoded for the cards' links onward to the vehicle page.
+  const tripParams =
+    when.state === "valid"
+      ? new URLSearchParams({ from: when.window.from, to: when.window.to }).toString()
+      : "";
 
   return (
     <>
@@ -71,12 +85,33 @@ export default async function SearchPage({
                       {results.length}
                     </span>{" "}
                     {results.length === 1 ? "vehicle" : "vehicles"}
+                    {when.state === "valid" && " free"}
                   </h1>
-                  <p className="mt-2 text-sm text-pearl-dim">
-                    {isEmptyQuery(query)
-                      ? "Everything available across both tracks."
-                      : "Matching your filters."}
-                  </p>
+                  {when.state === "valid" ? (
+                    <p data-figure className="mt-2 text-sm text-pearl-dim">
+                      {formatWall(when.window.from)} →{" "}
+                      {formatWall(when.window.to)}
+                      <span className="text-pearl-muted">
+                        {" "}
+                        · {formatDuration(when.hours)}
+                      </span>
+                    </p>
+                  ) : (
+                    <p className="mt-2 text-sm text-pearl-dim">
+                      {isEmptyQuery(query)
+                        ? "Everything across both tracks. Add dates to see what's free."
+                        : "Matching your filters."}
+                    </p>
+                  )}
+                  {/* Repeated here, not only in the filter rail: on a phone
+                      the rail is a collapsed disclosure, and a window that
+                      silently stopped filtering would read as "all of
+                      these are free". */}
+                  {when.state === "invalid" && (
+                    <p role="alert" className="mt-2 text-sm text-orange">
+                      Dates not applied: {WINDOW_PROBLEM_TEXT[when.problem]}
+                    </p>
+                  )}
                 </div>
                 <SortSelect query={query} />
               </div>
@@ -93,6 +128,12 @@ export default async function SearchPage({
                         <VehicleCard
                           vehicle={vehicle}
                           trustScore={DEMO_TRUST_SCORE}
+                          trip={
+                            quotes?.get(vehicle.id) && {
+                              quote: quotes.get(vehicle.id)!,
+                              params: tripParams,
+                            }
+                          }
                         />
                       </li>
                     ))}
@@ -102,9 +143,17 @@ export default async function SearchPage({
                 )}
               </ResultsFrame>
 
-              <p className="mt-12 text-xs text-pearl-muted">
+              <p className="mt-12 text-xs leading-relaxed text-pearl-muted">
                 Demo inventory. Vehicles, prices and ratings shown here are
                 authored for this preview, not live listings.
+                {quotes && PRICING.provisional && (
+                  <>
+                    {" "}
+                    Trip totals are indicative: hourly, weekly and shift rates
+                    follow a provisional pricing rule, and availability is a
+                    demo calendar.
+                  </>
+                )}
               </p>
             </div>
           </div>

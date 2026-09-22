@@ -1,4 +1,11 @@
 import {
+  isAvailable,
+  parseWindow,
+  quoteTrip,
+  type ParsedWindow,
+  type Quote,
+} from "@/lib/rental";
+import {
   CATEGORIES,
   VEHICLES,
   type Category,
@@ -52,6 +59,12 @@ export type SearchQuery = {
   /** Hide anything the current trust score cannot book. */
   unlockedOnly: boolean;
   sort: SortKey;
+  /** Raw trip window as it arrived, kept so an invalid entry can be shown
+   *  back to the renter with the reason, rather than silently dropped. */
+  from: string;
+  to: string;
+  /** The validated reading of from/to. Only a "valid" window filters. */
+  when: ParsedWindow;
 };
 
 export const EMPTY_QUERY: SearchQuery = {
@@ -60,6 +73,9 @@ export const EMPTY_QUERY: SearchQuery = {
   verifiedOnly: false,
   unlockedOnly: false,
   sort: "recommended",
+  from: "",
+  to: "",
+  when: { state: "none" },
 };
 
 /* ── URL <-> query ─────────────────────────────────────────────── */
@@ -93,8 +109,13 @@ export function parseSearchQuery(params: RawParams): SearchQuery {
   const sort = one(params.sort);
   const minPrice = int(one(params.min));
   const maxPrice = int(one(params.max));
+  const from = one(params.from);
+  const to = one(params.to);
 
   return {
+    from,
+    to,
+    when: parseWindow(from, to),
     q: one(params.q),
     city: one(params.city),
     category: CATEGORY_IDS.has(category) ? (category as Category) : undefined,
@@ -133,6 +154,11 @@ export function serializeSearchQuery(query: SearchQuery): URLSearchParams {
   if (query.verifiedOnly) params.set("verified", "1");
   if (query.unlockedOnly) params.set("unlocked", "1");
   if (query.sort !== "recommended") params.set("sort", query.sort);
+  // Both or neither: half a window is not a search.
+  if (query.from && query.to) {
+    params.set("from", query.from);
+    params.set("to", query.to);
+  }
   return params;
 }
 
@@ -195,15 +221,26 @@ function matches(
   if (query.unlockedOnly && isLocked(vehicle, trustScore)) return false;
   if (query.q && !haystack(vehicle).includes(query.q.toLowerCase()))
     return false;
+  // Last: the only clause that does per-day work.
+  if (query.when.state === "valid" && !isAvailable(vehicle, query.when.window))
+    return false;
   return true;
 }
 
-function compare(a: Vehicle, b: Vehicle, sort: SortKey): number {
+/** With a trip window, "price" means what this trip costs, not the day
+ *  rate: a scooter billed hourly and a car billed daily do not sort
+ *  correctly by per-day figures once the hourly rate is cheaper. */
+function compare(
+  a: Vehicle,
+  b: Vehicle,
+  sort: SortKey,
+  price: (v: Vehicle) => number,
+): number {
   switch (sort) {
     case "price-asc":
-      return a.perDay - b.perDay;
+      return price(a) - price(b);
     case "price-desc":
-      return b.perDay - a.perDay;
+      return price(b) - price(a);
     case "rating":
       // Rating alone puts a 5.0 with two trips above a 4.8 with three
       // hundred. Trips break the tie, which is what every marketplace
@@ -228,9 +265,21 @@ export function searchVehicles(
   trustScore: number,
   inventory: Vehicle[] = VEHICLES,
 ): Vehicle[] {
+  const quotes = quotesFor(query, inventory);
+  const price = (v: Vehicle) => quotes?.get(v.id)?.total ?? v.perDay;
   return inventory
     .filter((v) => matches(v, query, trustScore))
-    .sort((a, b) => compare(a, b, query.sort));
+    .sort((a, b) => compare(a, b, query.sort, price));
+}
+
+/** A trip quote per vehicle for the query's window, or null without one. */
+export function quotesFor(
+  query: SearchQuery,
+  inventory: Vehicle[] = VEHICLES,
+): Map<string, Quote> | null {
+  if (query.when.state !== "valid") return null;
+  const hours = query.when.hours;
+  return new Map(inventory.map((v) => [v.id, quoteTrip(v, hours)]));
 }
 
 /* ── Facets ────────────────────────────────────────────────────── */

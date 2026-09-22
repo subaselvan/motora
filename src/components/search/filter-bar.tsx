@@ -4,6 +4,8 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { MapPin, Search, SlidersHorizontal, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useSearchNav } from "@/components/search/search-transition";
+import { TripWindowFields } from "@/components/search/trip-window-fields";
+import { WINDOW_PROBLEM_TEXT, formatWall } from "@/lib/rental";
 import {
   SORTS,
   isEmptyQuery,
@@ -62,10 +64,19 @@ export function FilterBar({
         </div>
       </details>
 
-      {/* Desktop: a sticky rail. Sticks below the 56px condensed navbar. */}
+      {/* Desktop: a sticky rail. Sticks below the 56px condensed navbar.
+
+          Capped to the viewport and scrollable in itself: with the trip
+          dates added the rail outgrows a 768px-tall laptop screen, and a
+          sticky element taller than the viewport can never show its own
+          bottom — the toggles at the end were simply unreachable.
+          data-lenis-prevent is inert today (Lenis only mounts on the
+          homepage) but keeps this scroller working if smooth scroll is
+          ever mounted site-wide, where it would otherwise move the page. */}
       <aside
         aria-label="Filters"
-        className="hidden lg:sticky lg:top-24 lg:block lg:self-start"
+        data-lenis-prevent
+        className="hidden lg:sticky lg:top-24 lg:block lg:max-h-[calc(100vh-7rem)] lg:self-start lg:overflow-y-auto lg:pr-2"
       >
         <div className="flex items-baseline justify-between gap-3">
           <h2 className="font-heading text-sm font-semibold text-pearl">
@@ -110,6 +121,30 @@ function FilterFields({
 }) {
   return (
     <div className="flex flex-col gap-6">
+      {/* First, because on a rental site "when" is the question the rest
+          of the filters refine — the Royal Brothers and Zoomcar order. */}
+      <Field label="When">
+        <TripWindowFields
+          layout="stack"
+          from={query.from}
+          to={query.to}
+          onChange={(from, to) => update({ from, to })}
+        />
+        {/* Plain text, not role="alert": the results header already
+            announces this once, and the rail renders twice (mobile
+            disclosure and desktop aside), so an alert here was read out
+            two or three times for one problem. */}
+        {query.when.state === "invalid" ? (
+          <p className="mt-2.5 text-xs leading-relaxed text-orange">
+            {WINDOW_PROBLEM_TEXT[query.when.problem]}
+          </p>
+        ) : query.when.state === "none" ? (
+          <p className="mt-2.5 text-xs leading-relaxed text-pearl-muted">
+            Add dates to see only what&rsquo;s free, priced for the whole trip.
+          </p>
+        ) : null}
+      </Field>
+
       <TextFilter query={query} update={update} />
       <CityFilter query={query} facets={facets} update={update} />
 
@@ -579,6 +614,12 @@ function describeActive(
 ): { key: string; label: string; clear: Partial<SearchQuery> }[] {
   const pills: { key: string; label: string; clear: Partial<SearchQuery> }[] =
     [];
+  if (query.when.state === "valid")
+    pills.push({
+      key: "when",
+      label: `${formatWall(query.from)} → ${formatWall(query.to)}`,
+      clear: { from: "", to: "" },
+    });
   if (query.q)
     pills.push({ key: "q", label: `“${query.q}”`, clear: { q: "" } });
   if (query.city)

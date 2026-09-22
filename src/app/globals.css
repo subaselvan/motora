@@ -741,6 +741,39 @@ a {
   box-shadow: 0 0 0 2px var(--color-lime);
 }
 
+/* Date input, same closed-state chrome as Input and .field-select.
+   color-scheme:dark is what makes the browser draw its own calendar popup
+   and picker icon for a dark page; without it Chrome opens a white panel
+   over an obsidian site. */
+.field-date {
+  appearance: none;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-charcoal-2);
+  background-color: var(--color-obsidian-sunken);
+  box-shadow: var(--elev-sunken);
+  color: var(--color-pearl);
+  color-scheme: dark;
+  transition: border-color var(--duration-short) var(--ease-base);
+}
+
+.field-date:hover {
+  border-color: var(--color-charcoal-3);
+}
+
+.field-date:focus-visible {
+  outline: none;
+  border-color: var(--color-lime);
+  box-shadow: 0 0 0 2px var(--color-lime);
+}
+
+/* An empty date input shows "dd/mm/yyyy" in full pearl, which reads as a
+   value already chosen. Dimmed until it holds one. A data attribute rather
+   than :invalid, because an optional date input is never invalid when
+   empty — the pseudo-class would never match. */
+.field-date[data-empty] {
+  color: var(--color-pearl-muted);
+}
+
 /* The popup list is painted by the OS and inherits nothing, so each option
    needs the surface colour stated or Windows renders white-on-white. */
 .field-select option {
@@ -959,6 +992,19 @@ a {
   .save-pulse {
     animation: none;
   }
+}
+
+/* ── Scrolling chip rows ──────────────────────────────────────────────
+   Horizontal rows that scroll by swipe or trackpad. The scrollbar is
+   hidden because the row signals overflow itself (a clipped chip under an
+   edge fade); keyboard users still reach every chip by Tab, which scrolls
+   the focused one into view. */
+.scroll-row {
+  scrollbar-width: none;
+}
+
+.scroll-row::-webkit-scrollbar {
+  display: none;
 }
 
 /* ── Mobile filter disclosure ─────────────────────────────────────────
